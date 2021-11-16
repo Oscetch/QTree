@@ -39,6 +39,22 @@ namespace QTree.Test
         }
 
         [TestMethod]
+        public void OnlyReturnUniqueResultsTest()
+        {
+            var sut = new QuadTree<string>(Rectangle.Create(0, 0, QUAD_SIZE, QUAD_SIZE));
+            for (var i = 0; i < 1_000_000; i++)
+            {
+                sut.Add(_random.Next(QUAD_SIZE), _random.Next(QUAD_SIZE), 1, 1, string.Empty);
+            }
+
+            var position = QUAD_SIZE - 5000;
+            var searchArea = Rectangle.Create(position - 2000, position - 2000, 4000, 4000);
+            var results = sut.FindNode(searchArea);
+
+            Assert.IsTrue(results.Count == results.GroupBy(x => x.Id).Count());
+        }
+
+        [TestMethod]
         public void RemoveTest()
         {
             // arrange
