@@ -39,6 +39,22 @@ namespace QTree.Test
         }
 
         [TestMethod]
+        public void OnlyReturnUniqueResultsTest()
+        {
+            var sut = new QuadTree<string>(Rectangle.Create(0, 0, QUAD_SIZE, QUAD_SIZE));
+            for (var i = 0; i < 1_000_000; i++)
+            {
+                sut.Add(_random.Next(QUAD_SIZE), _random.Next(QUAD_SIZE), 1, 1, string.Empty);
+            }
+
+            var position = QUAD_SIZE - 5000;
+            var searchArea = Rectangle.Create(position - 2000, position - 2000, 4000, 4000);
+            var results = sut.FindNode(searchArea);
+
+            Assert.IsTrue(results.Count == results.GroupBy(x => x.Id).Count());
+        }
+
+        [TestMethod]
         public void RemoveTest()
         {
             // arrange
@@ -64,6 +80,30 @@ namespace QTree.Test
             Console.WriteLine($"Time: {time}");
             Assert.IsTrue(wasRemoved);
             Assert.IsTrue(result.Count == 0 || result.All(x => x == string.Empty));
+        }
+
+        [TestMethod]
+        public void LiterallyCornerCaseTest()
+        {
+            const string CORRECT = "CORRECT";
+
+            var test = new QuadTree<string>(0, 0, 1000, 1000);
+            test.Add(490, 490, 20, 20, CORRECT);
+
+            for(var i = 0; i < 10; i++)
+            {
+                test.Add(40 + (i * 20), 20, 40, 40, string.Empty);
+            }
+
+            var upperLeft = test.FindNode(495, 495, 1, 1);
+            var upperRight = test.FindNode(505, 495, 1, 1);
+            var bottomLeft = test.FindNode(495, 505, 1, 1);
+            var bottomRight = test.FindNode(505, 505, 1, 1);
+
+            Assert.IsTrue(upperLeft.FirstOrDefault(x => x.Object == CORRECT) != null);
+            Assert.IsTrue(upperRight.FirstOrDefault(x => x.Object == CORRECT) != null);
+            Assert.IsTrue(bottomLeft.FirstOrDefault(x => x.Object == CORRECT) != null);
+            Assert.IsTrue(bottomRight.FirstOrDefault(x => x.Object == CORRECT) != null);
         }
     }
 }
