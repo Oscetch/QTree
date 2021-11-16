@@ -1,0 +1,24 @@
+﻿using QTree.Interfaces;
+using QTree.Util;
+
+namespace QTree
+{
+    public class QuadTreeObject<T> : IQuadTreeObject<T>
+    {
+        public Rectangle Bounds { get; }
+        public T Object { get; }
+        public QuadId Id { get; }
+
+        public QuadTreeObject(Rectangle bounds, T obj)
+        {
+            Id = new QuadId();
+            Bounds = bounds;
+            Object = obj;
+        }
+
+        public QuadTreeObject(int x, int y, int width, int height, T obj)
+            : this(Rectangle.Create(x, y, width, height), obj)
+        {
+        }
+    }
+}
