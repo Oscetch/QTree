@@ -1,5 +1,6 @@
 # QTree
-A simple quadtree implementation
+A simple quadtree implementation.  
+Available on as a nuget https://www.nuget.org/packages/QTree/
 
 Example usage:
 

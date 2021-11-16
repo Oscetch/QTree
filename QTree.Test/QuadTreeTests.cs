@@ -65,5 +65,29 @@ namespace QTree.Test
             Assert.IsTrue(wasRemoved);
             Assert.IsTrue(result.Count == 0 || result.All(x => x == string.Empty));
         }
+
+        [TestMethod]
+        public void LiterallyCornerCaseTest()
+        {
+            const string CORRECT = "CORRECT";
+
+            var test = new QuadTree<string>(0, 0, 1000, 1000);
+            test.Add(490, 490, 20, 20, CORRECT);
+
+            for(var i = 0; i < 10; i++)
+            {
+                test.Add(40 + (i * 20), 20, 40, 40, string.Empty);
+            }
+
+            var upperLeft = test.FindNode(495, 495, 1, 1);
+            var upperRight = test.FindNode(505, 495, 1, 1);
+            var bottomLeft = test.FindNode(495, 505, 1, 1);
+            var bottomRight = test.FindNode(505, 505, 1, 1);
+
+            Assert.IsTrue(upperLeft.FirstOrDefault(x => x.Object == CORRECT) != null);
+            Assert.IsTrue(upperRight.FirstOrDefault(x => x.Object == CORRECT) != null);
+            Assert.IsTrue(bottomLeft.FirstOrDefault(x => x.Object == CORRECT) != null);
+            Assert.IsTrue(bottomRight.FirstOrDefault(x => x.Object == CORRECT) != null);
+        }
     }
 }

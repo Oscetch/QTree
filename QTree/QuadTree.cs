@@ -207,7 +207,7 @@ namespace QTree
 
         private bool TryAdd(IQuadTreeObject<T> qTreeObj)
         {
-            if (!_bounds.Overlaps(qTreeObj.Bounds))
+            if (!_bounds.Contains(qTreeObj.Bounds))
             {
                 return false;
             }
