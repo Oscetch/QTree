@@ -3,11 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31515.178
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QTree", "QTree\QTree.csproj", "{257F7572-4495-43D6-8AF9-6308A817CECA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QTree", "QTree\QTree.csproj", "{257F7572-4495-43D6-8AF9-6308A817CECA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{882E07CD-A370-4B65-98CD-2D8382B02603}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QTree.Test", "QTree.Test\QTree.Test.csproj", "{17AD0893-2FAB-4313-9FBF-16FB260CB053}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QTree.Test", "QTree.Test\QTree.Test.csproj", "{17AD0893-2FAB-4313-9FBF-16FB260CB053}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{3A8AB49C-3755-45DB-8521-5D24CC249AF1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QTree.TestTool", "QTree.TestTool\QTree.TestTool.csproj", "{28D74E27-03A0-465F-8674-ECE1380BAA4A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,12 +27,17 @@ Global
 		{17AD0893-2FAB-4313-9FBF-16FB260CB053}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17AD0893-2FAB-4313-9FBF-16FB260CB053}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{17AD0893-2FAB-4313-9FBF-16FB260CB053}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28D74E27-03A0-465F-8674-ECE1380BAA4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28D74E27-03A0-465F-8674-ECE1380BAA4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28D74E27-03A0-465F-8674-ECE1380BAA4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28D74E27-03A0-465F-8674-ECE1380BAA4A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{17AD0893-2FAB-4313-9FBF-16FB260CB053} = {882E07CD-A370-4B65-98CD-2D8382B02603}
+		{28D74E27-03A0-465F-8674-ECE1380BAA4A} = {3A8AB49C-3755-45DB-8521-5D24CC249AF1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B0CDCEA7-0C1C-471F-BB60-587CEAC12B05}

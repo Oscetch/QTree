@@ -39,6 +39,14 @@ namespace QTree.Util
             height = Bottom - Top;
         }
 
+        public Point2D GetCenter()
+        {
+            Point2D center;
+            center.X = Left + ((Right - Left) / 2);
+            center.Y = Top + ((Bottom - Top) / 2);
+            return center;
+        }
+
         public Rectangle Union(Rectangle other)
         {
             return Union(this, other);
