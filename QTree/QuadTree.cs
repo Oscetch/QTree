@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace QTree
 {
-    public sealed class QuadTree<T> : QuadTreeBase<T>
+    public sealed class QuadTree<T> : QuadTreeBase<T, QuadTree<T>>
     {
         private Rectangle _bounds;
 
@@ -16,7 +16,7 @@ namespace QTree
         }
 
         public QuadTree(int x, int y, int width, int height, int splitLimit = 5, int depthLimit = 100)
-            : this(Rectangle.Create(x, y, width, height), 0, splitLimit, depthLimit)
+            : this(new Rectangle(x, y, width, height), 0, splitLimit, depthLimit)
         {
         }
 
@@ -103,6 +103,33 @@ namespace QTree
             return items;
         }
 
+        public override List<IQuadTreeObject<T>> FindNode(int x, int y)
+        {
+            var items = new List<IQuadTreeObject<T>>();
+            if (!_bounds.Contains(x, y))
+            {
+                return items;
+            }
+
+            foreach (var obj in InternalObjects)
+            {
+                if (obj.Bounds.Contains(x, y))
+                {
+                    items.Add(obj);
+                }
+            }
+
+            if (IsSplit)
+            {
+                items.AddRange(TL.FindNode(x, y));
+                items.AddRange(TR.FindNode(x, y));
+                items.AddRange(BL.FindNode(x, y));
+                items.AddRange(BR.FindNode(x, y));
+            }
+
+            return items;
+        }
+
         public override List<T> FindObject(Rectangle rectangle)
         {
             var items = new List<T>();
@@ -130,6 +157,33 @@ namespace QTree
             return items;
         }
 
+        public override List<T> FindObject(int x, int y)
+        {
+            var items = new List<T>();
+            if (!_bounds.Contains(x, y))
+            {
+                return items;
+            }
+
+            foreach (var obj in InternalObjects)
+            {
+                if (obj.Bounds.Contains(x, y))
+                {
+                    items.Add(obj.Object);
+                }
+            }
+
+            if (IsSplit)
+            {
+                items.AddRange(TL.FindObject(x, y));
+                items.AddRange(TR.FindObject(x, y));
+                items.AddRange(BL.FindObject(x, y));
+                items.AddRange(BR.FindObject(x, y));
+            }
+
+            return items;
+        }
+
         public override List<Rectangle> GetQuads()
         {
             var quads = new List<Rectangle> { _bounds };
@@ -146,7 +200,7 @@ namespace QTree
             return quads;
         }
 
-        internal override bool TryAdd(IQuadTreeObject<T> qTreeObj)
+        private bool TryAdd(IQuadTreeObject<T> qTreeObj)
         {
             if (!_bounds.Contains(qTreeObj.Bounds))
             {
@@ -182,13 +236,13 @@ namespace QTree
                 throw new InvalidOperationException("Tried to split tree more than once");
             }
 
-            var newBounds = _bounds.Split(2, 2);
+            _bounds.Split(out var tl, out var tr, out var bl, out var br);
             var newDepth = Depth + 1;
 
-            TL = new QuadTree<T>(newBounds[Point2D.Zero], newDepth, SplitLimit, DepthLimit);
-            TR = new QuadTree<T>(newBounds[new Point2D(1, 0)], newDepth, SplitLimit, DepthLimit);
-            BL = new QuadTree<T>(newBounds[new Point2D(0, 1)], newDepth, SplitLimit, DepthLimit);
-            BR = new QuadTree<T>(newBounds[new Point2D(1)], newDepth, SplitLimit, DepthLimit);
+            TL = new QuadTree<T>(tl, newDepth, SplitLimit, DepthLimit);
+            TR = new QuadTree<T>(tr, newDepth, SplitLimit, DepthLimit);
+            BL = new QuadTree<T>(bl, newDepth, SplitLimit, DepthLimit);
+            BR = new QuadTree<T>(br, newDepth, SplitLimit, DepthLimit);
 
             for(var i = 0; i < InternalObjects.Count; i++)
             {

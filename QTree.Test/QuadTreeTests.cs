@@ -17,15 +17,15 @@ namespace QTree.Test
         public void FindTest()
         {
             // arrange
-            var sut = new QuadTree<string>(Rectangle.Create(0, 0, QUAD_SIZE, QUAD_SIZE));
+            var sut = new QuadTree<string>(new Rectangle(0, 0, QUAD_SIZE, QUAD_SIZE));
             for(var i = 0; i < 1_000_000; i++)
             {
                 sut.Add(_random.Next(QUAD_SIZE), _random.Next(QUAD_SIZE), 1, 1, string.Empty);
             }
             var position = QUAD_SIZE - 5000;
-            var expected = Rectangle.Create(position, position, 1, 1);
+            var expected = new Rectangle(position, position, 1, 1);
             sut.Add(expected, "CORRECT");
-            var searchArea = Rectangle.Create(position - 200, position - 200, 400, 400);
+            var searchArea = new Rectangle(position - 200, position - 200, 400, 400);
 
             // act
             var timer = Stopwatch.StartNew();
@@ -39,16 +39,40 @@ namespace QTree.Test
         }
 
         [TestMethod]
+        public void FindPointTest()
+        {
+            // arrange
+            var sut = new QuadTree<string>(new Rectangle(0, 0, QUAD_SIZE, QUAD_SIZE));
+            for (var i = 0; i < 1_000_000; i++)
+            {
+                sut.Add(_random.Next(QUAD_SIZE), _random.Next(QUAD_SIZE), 1, 1, string.Empty);
+            }
+            var position = QUAD_SIZE - 5000;
+            var expected = new Rectangle(position, position, 1, 1);
+            sut.Add(expected, "CORRECT");
+
+            // act
+            var timer = Stopwatch.StartNew();
+            var result = sut.FindObject(position, position);
+            var time = timer.ElapsedMilliseconds;
+            timer.Stop();
+
+            // assert
+            Console.WriteLine($"Time: {time}");
+            Assert.IsTrue(result.Any(x => x == "CORRECT"));
+        }
+
+        [TestMethod]
         public void OnlyReturnUniqueResultsTest()
         {
-            var sut = new QuadTree<string>(Rectangle.Create(0, 0, QUAD_SIZE, QUAD_SIZE));
+            var sut = new QuadTree<string>(new Rectangle(0, 0, QUAD_SIZE, QUAD_SIZE));
             for (var i = 0; i < 1_000_000; i++)
             {
                 sut.Add(_random.Next(QUAD_SIZE), _random.Next(QUAD_SIZE), 1, 1, string.Empty);
             }
 
             var position = QUAD_SIZE - 5000;
-            var searchArea = Rectangle.Create(position - 2000, position - 2000, 4000, 4000);
+            var searchArea = new Rectangle(position - 2000, position - 2000, 4000, 4000);
             var results = sut.FindNode(searchArea);
 
             Assert.IsTrue(results.Count == results.GroupBy(x => x.Id).Count());
@@ -58,16 +82,16 @@ namespace QTree.Test
         public void RemoveTest()
         {
             // arrange
-            var sut = new QuadTree<string>(Rectangle.Create(0, 0, QUAD_SIZE, QUAD_SIZE));
+            var sut = new QuadTree<string>(new Rectangle(0, 0, QUAD_SIZE, QUAD_SIZE));
             for (var i = 0; i < 1_000_000; i++)
             {
-                sut.Add(Rectangle.Create(_random.Next(QUAD_SIZE), _random.Next(QUAD_SIZE), 1, 1), string.Empty);
+                sut.Add(new Rectangle(_random.Next(QUAD_SIZE), _random.Next(QUAD_SIZE), 1, 1), string.Empty);
             }
             var position = QUAD_SIZE - 5000;
-            var expected = Rectangle.Create(position, position, 1, 1);
+            var expected = new Rectangle(position, position, 1, 1);
             var toRemove = new QuadTreeObject<string>(expected, "INCORRECT");
             sut.Add(toRemove);
-            var searchArea = Rectangle.Create(position - 2500, position - 2500, 5000, 5000);
+            var searchArea = new Rectangle(position - 2500, position - 2500, 5000, 5000);
 
             // act
             var timer = Stopwatch.StartNew();

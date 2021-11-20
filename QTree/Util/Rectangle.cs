@@ -5,38 +5,40 @@ namespace QTree.Util
 {
     public struct Rectangle
     {
-        public int Top;
+        public int X;
+        public int Y;
         public int Bottom;
-        public int Left;
         public int Right;
-
-        public static Rectangle Create(int x, int y, int width, int height)
-            => new(y, y + height, x, x + width);
+        public int Width;
+        public int Height;
+        public int Top => Y;
+        public int Left => X;
 
         public static Rectangle Union(Rectangle a, Rectangle b)
         {
             Rectangle rectangle;
-            rectangle.Top = Math.Min(a.Top, b.Top);
+            rectangle.Y = Math.Min(a.Y, b.Y);
             rectangle.Bottom = Math.Max(a.Bottom, b.Bottom);
-            rectangle.Left = Math.Min(a.Left, b.Left);
+            rectangle.X = Math.Min(a.X, b.X);
             rectangle.Right = Math.Max(a.Right, b.Right);
+            rectangle.Width = rectangle.Right - rectangle.X;
+            rectangle.Height = rectangle.Bottom - rectangle.Y;
             return rectangle;
         }
 
-        public Rectangle(int top, int bottom, int left, int right)
+        public Rectangle(int x, int y, int width, int height)
+            : this(x, y, width, height, x + width, y + height)
         {
-            Top = top;
-            Bottom = bottom;
-            Left = left;
-            Right = right;
         }
 
-        public void Deconstruct(out int x, out int y, out int width, out int height)
+        private Rectangle(int x, int y, int width, int height, int right, int bottom)
         {
-            x = Left;
-            y = Top;
-            width = Right - Left;
-            height = Bottom - Top;
+            X = x;
+            Y = y;
+            Width = width;
+            Height = height;
+            Bottom = bottom;
+            Right = right;
         }
 
         public Point2D GetCenter()
@@ -76,27 +78,28 @@ namespace QTree.Util
                 && Top <= point2D.Y;
         }
 
-        public Dictionary<Point2D, Rectangle> Split(int rows, int columns)
+        public bool Contains(int x, int y)
         {
-            Deconstruct(out var x, out var y, out var width, out var heigth);
+            return Left <= x
+                && Right >= x
+                && Bottom >= y
+                && Top <= y;
+        }
 
-            var cellHeight = heigth / rows;
-            var cellWidth = width / columns;
+        public void Split(out Rectangle topLeft,
+            out Rectangle topRight,
+            out Rectangle bottomLeft,
+            out Rectangle bottomRight)
+        {
+            var halfWidth = Width / 2;
+            var halfHeight = Height / 2;
+            var rightX = X + halfWidth;
+            var bottomY = Y + halfHeight;
 
-            var result = new Dictionary<Point2D, Rectangle>();
-
-            for (var cx = 0; cx < columns; cx++)
-            {
-                for (var cy = 0; cy < rows; cy++)
-                {
-                    result[new Point2D(cx, cy)] = Create(x + (cx * cellWidth),
-                        y + (cy * cellHeight),
-                        cellWidth,
-                        cellHeight);
-                }
-            }
-
-            return result;
+            topLeft = new Rectangle(X, Y, halfWidth, halfHeight, rightX, bottomY);
+            topRight = new Rectangle(rightX, Y, halfWidth, halfHeight, Right, bottomY);
+            bottomLeft = new Rectangle(X, bottomY, halfWidth, halfHeight, rightX, Bottom);
+            bottomRight = new Rectangle(rightX, bottomY, halfWidth, halfHeight, Right, Bottom);
         }
     }
 }
