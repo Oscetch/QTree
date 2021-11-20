@@ -84,8 +84,8 @@ namespace QTree
             var items = new List<IQuadTreeObject<T>>();
             if (!_bounds.HasValue || !_bounds.Value.Contains(x, y))
             {
-                return items;
-            }
+            return items;
+        }
 
             foreach (var obj in InternalObjects)
             {
