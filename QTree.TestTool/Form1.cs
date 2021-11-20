@@ -47,8 +47,7 @@ namespace QTree.TestTool
             {
                 foreach (var obj in _quadTree.FindNode(0, 0, testAreaPanel.Width, testAreaPanel.Height))
                 {
-                    obj.Bounds.Deconstruct(out var x, out var y, out var width, out var height);
-                    e.Graphics.DrawRectangle(pen, new Rectangle(x, y, width, height));
+                    e.Graphics.DrawRectangle(pen, obj.Bounds.X, obj.Bounds.Y, obj.Bounds.Width, obj.Bounds.Height);
                 }
             }
 
@@ -56,8 +55,7 @@ namespace QTree.TestTool
             {
                 foreach(var obj in _quadTree.FindNode(_mouseBounds))
                 {
-                    obj.Bounds.Deconstruct(out var x, out var y, out var width, out var height);
-                    e.Graphics.DrawRectangle(highlight, new Rectangle(x, y, width, height));
+                    e.Graphics.DrawRectangle(highlight, obj.Bounds.X, obj.Bounds.Y, obj.Bounds.Width, obj.Bounds.Height);
                 }
             }
 
@@ -66,8 +64,7 @@ namespace QTree.TestTool
             {
                 foreach(var quad in _quadTree.GetQuads())
                 {
-                    quad.Deconstruct(out var x, out var y, out var width, out var height);
-                    var drawingRect = new Rectangle(x, y, width, height);
+                    var drawingRect = new Rectangle(quad.X, quad.Y, quad.Width, quad.Height);
 
                     if (quad.Overlaps(_mouseBounds))
                     {
@@ -171,7 +168,7 @@ namespace QTree.TestTool
                 return;
             }
 
-            _mouseBounds = Util.Rectangle.Create(e.X, e.Y, 1, 1);
+            _mouseBounds = new Util.Rectangle(e.X, e.Y, 1, 1);
             testAreaPanel.Invalidate();
         }
 

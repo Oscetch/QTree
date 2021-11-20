@@ -2,13 +2,10 @@
 using QTree.Util;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace QTree
 {
-    public sealed class DynamicQuadTree<T> : QuadTreeBase<T>
+    public sealed class DynamicQuadTree<T> : QuadTreeBase<T, DynamicQuadTree<T>>
     {
         private Rectangle? _bounds;
         private Point2D _quadStartCenter;
@@ -82,6 +79,33 @@ namespace QTree
             return items;
         }
 
+        public override List<IQuadTreeObject<T>> FindNode(int x, int y)
+        {
+            var items = new List<IQuadTreeObject<T>>();
+            if (!_bounds.HasValue || !_bounds.Value.Contains(x, y))
+            {
+                return items;
+            }
+
+            foreach (var obj in InternalObjects)
+            {
+                if (obj.Bounds.Contains(x, y))
+                {
+                    items.Add(obj);
+                }
+            }
+
+            if (IsSplit)
+            {
+                items.AddRange(TL.FindNode(x, y));
+                items.AddRange(TR.FindNode(x, y));
+                items.AddRange(BL.FindNode(x, y));
+                items.AddRange(BR.FindNode(x, y));
+            }
+
+            return items;
+        }
+
         public override List<T> FindObject(Rectangle rectangle)
         {
             var items = new List<T>();
@@ -104,6 +128,33 @@ namespace QTree
                 items.AddRange(TR.FindObject(rectangle));
                 items.AddRange(BL.FindObject(rectangle));
                 items.AddRange(BR.FindObject(rectangle));
+            }
+
+            return items;
+        }
+
+        public override List<T> FindObject(int x, int y)
+        {
+            var items = new List<T>();
+            if (!_bounds.HasValue || !_bounds.Value.Contains(x, y))
+            {
+                return items;
+            }
+
+            foreach (var obj in InternalObjects)
+            {
+                if (obj.Bounds.Contains(x, y))
+                {
+                    items.Add(obj.Object);
+                }
+            }
+
+            if (IsSplit)
+            {
+                items.AddRange(TL.FindObject(x, y));
+                items.AddRange(TR.FindObject(x, y));
+                items.AddRange(BL.FindObject(x, y));
+                items.AddRange(BR.FindObject(x, y));
             }
 
             return items;
@@ -206,13 +257,13 @@ namespace QTree
             BL = new DynamicQuadTree<T>(newDepth, SplitLimit, DepthLimit);
             BR = new DynamicQuadTree<T>(newDepth, SplitLimit, DepthLimit);
 
-            var boundsMap = _bounds.Value.Split(2, 2);
+            _bounds.Value.Split(out var tl, out var tr, out var bl, out var br);
             var initialBoundsList = new (IQuadTree<T> tree, Rectangle bounds)[]
             {
-                (TL, boundsMap[Point2D.Zero]),
-                (TR, boundsMap[new Point2D(1, 0)]),
-                (BL, boundsMap[new Point2D(0, 1)]),
-                (BR, boundsMap[Point2D.One])
+                (TL, tl),
+                (TR, tr),
+                (BL, bl),
+                (BR, br)
             };
 
             for (var i = 0; i < InternalObjects.Count; i++)
