@@ -22,8 +22,8 @@ jobs:
     - name: Restore nuget packages
       run: nuget restore QTree.sln    
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore QTree.sln
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build QTree.sln --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
