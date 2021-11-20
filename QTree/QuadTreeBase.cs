@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace QTree
 {
-    public abstract class QuadTreeBase<T> : IQuadTree<T>
+    public abstract class QuadTreeBase<T, TTree> : IQuadTree<T> where TTree : QuadTreeBase<T, TTree>
     {
         protected int SplitLimit { get; }
         protected int DepthLimit { get; }
@@ -18,10 +18,10 @@ namespace QTree
 
         protected bool IsSplit { get; set; }
 
-        protected QuadTreeBase<T> TL { get; set; }
-        protected QuadTreeBase<T> TR { get; set; }
-        protected QuadTreeBase<T> BL { get; set; }
-        protected QuadTreeBase<T> BR { get; set; }
+        protected TTree TL { get; set; }
+        protected TTree TR { get; set; }
+        protected TTree BL { get; set; }
+        protected TTree BR { get; set; }
 
         protected QuadTreeBase(int depth, int splitLimit, int depthLimit)
         {
@@ -87,24 +87,32 @@ namespace QTree
 
         public List<IQuadTreeObject<T>> FindNode(int x, int y, int width, int height)
         {
-            return FindNode(Rectangle.Create(x, y, width, height));
+            return FindNode(new Rectangle(x, y, width, height));
         }
 
         public abstract List<IQuadTreeObject<T>> FindNode(Rectangle rectangle);
 
         public List<T> FindObject(int x, int y, int width, int height)
         {
-            return FindObject(Rectangle.Create(x, y, width, height));
+            return FindObject(new Rectangle(x, y, width, height));
         }
 
         public abstract List<T> FindObject(Rectangle rectangle);
 
         public abstract List<Rectangle> GetQuads();
 
-        internal virtual bool TryAdd(IQuadTreeObject<T> obj)
+        public abstract List<IQuadTreeObject<T>> FindNode(int x, int y);
+
+        public List<IQuadTreeObject<T>> FindNode(Point2D point)
         {
-            Add(obj);
-            return true;
+            return FindNode(point.X, point.Y);
+        }
+
+        public abstract List<T> FindObject(int x, int y);
+
+        public List<T> FindObject(Point2D point)
+        {
+            return FindObject(point.X, point.Y);
         }
     }
 }

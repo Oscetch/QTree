@@ -17,7 +17,7 @@ namespace QTree
         }
 
         public QuadTreeObject(int x, int y, int width, int height, T obj)
-            : this(Rectangle.Create(x, y, width, height), obj)
+            : this(new Rectangle(x, y, width, height), obj)
         {
         }
     }
