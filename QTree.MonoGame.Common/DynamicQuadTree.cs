@@ -1,45 +1,48 @@
 ﻿using Microsoft.Xna.Framework;
-using QTree.MonoGame.Standard.Exceptions;
-using QTree.MonoGame.Standard.Extensions;
-using QTree.MonoGame.Standard.Interfaces;
+using QTree.MonoGame.Common.Extensions;
+using QTree.MonoGame.Common.Interfaces;
 using System;
 using System.Collections.Generic;
 
-namespace QTree.MonoGame.Standard
+namespace QTree.MonoGame.Common
 {
-    public sealed class QuadTree<T> : QuadTreeBase<T, QuadTree<T>>
+    public sealed class DynamicQuadTree<T> : QuadTreeBase<T, DynamicQuadTree<T>>
     {
-        private Rectangle _bounds;
+        private Rectangle? _bounds;
+        private Point _quadStartCenter;
 
-        public QuadTree(Rectangle bounds, int splitLimit = 5, int depthLimit = 100)
-            : this(bounds, 0, splitLimit, depthLimit)
+        public DynamicQuadTree(int splitLimit = 5, int depthLimit = 100)
+            : base(0, splitLimit, depthLimit)
         {
         }
 
-        public QuadTree(int x, int y, int width, int height, int splitLimit = 5, int depthLimit = 100)
-            : this(new Rectangle(x, y, width, height), 0, splitLimit, depthLimit)
-        {
-        }
-
-        private QuadTree(Rectangle bounds, int depth, int splitLimit, int depthLimit)
+        private DynamicQuadTree(int depth, int splitLimit, int depthLimit)
             : base(depth, splitLimit, depthLimit)
         {
-            _bounds = bounds;
         }
 
         public override void Add(IQuadTreeObject<T> qTreeObj)
         {
-            if (!_bounds.Contains(qTreeObj.Bounds))
+            if (!_bounds.HasValue)
             {
-                throw new OutOfQuadException("Attempted to add object outside of the qtree bounds");
+                _bounds = qTreeObj.Bounds;
+            }
+            else if (!_bounds.Value.Contains(qTreeObj.Bounds))
+            {
+                _bounds = Rectangle.Union(_bounds.Value, qTreeObj.Bounds);
             }
 
             if (IsSplit)
             {
-                if (!TryAddChild(qTreeObj))
+                if (TryGetChildToAddTo(qTreeObj.Bounds, out var child))
+                {
+                    child.Add(qTreeObj);
+                }
+                else
                 {
                     InternalObjects.Add(qTreeObj);
                 }
+
                 return;
             }
 
@@ -50,37 +53,10 @@ namespace QTree.MonoGame.Standard
             }
         }
 
-        public override bool Remove(IQuadTreeObject<T> qTreeObj)
-        {
-            if (!_bounds.Intersects(qTreeObj.Bounds))
-            {
-                return false;
-            }
-
-            for (var i = 0; i < InternalObjects.Count; i++)
-            {
-                if (InternalObjects[i].Id.Id == qTreeObj.Id.Id)
-                {
-                    InternalObjects.RemoveAt(i);
-                    return true;
-                }
-            }
-
-            if (!IsSplit)
-            {
-                return false;
-            }
-
-            return TL.Remove(qTreeObj)
-                || TR.Remove(qTreeObj)
-                || BL.Remove(qTreeObj)
-                || BR.Remove(qTreeObj);
-        }
-
         public override List<IQuadTreeObject<T>> FindNode(Point point)
         {
             var items = new List<IQuadTreeObject<T>>();
-            if (!_bounds.Contains(point))
+            if (!_bounds.HasValue || !_bounds.Value.Contains(point))
             {
                 return items;
             }
@@ -107,7 +83,7 @@ namespace QTree.MonoGame.Standard
         public override List<IQuadTreeObject<T>> FindNode(Rectangle rectangle)
         {
             var items = new List<IQuadTreeObject<T>>();
-            if (!rectangle.Intersects(_bounds))
+            if (!_bounds.HasValue || !rectangle.Intersects(_bounds.Value))
             {
                 return items;
             }
@@ -134,7 +110,7 @@ namespace QTree.MonoGame.Standard
         public override List<T> FindObject(Point point)
         {
             var items = new List<T>();
-            if (!_bounds.Contains(point))
+            if (!_bounds.HasValue || !_bounds.Value.Contains(point))
             {
                 return items;
             }
@@ -161,7 +137,7 @@ namespace QTree.MonoGame.Standard
         public override List<T> FindObject(Rectangle rectangle)
         {
             var items = new List<T>();
-            if (!rectangle.Intersects(_bounds))
+            if (!_bounds.HasValue || !rectangle.Intersects(_bounds.Value))
             {
                 return items;
             }
@@ -185,9 +161,42 @@ namespace QTree.MonoGame.Standard
             return items;
         }
 
+        public override bool Remove(IQuadTreeObject<T> qTreeObj)
+        {
+            if (!_bounds.HasValue || !_bounds.Value.Intersects(qTreeObj.Bounds))
+            {
+                return false;
+            }
+
+            for (var i = 0; i < InternalObjects.Count; i++)
+            {
+                if (InternalObjects[i].Id.Id == qTreeObj.Id.Id)
+                {
+                    InternalObjects.RemoveAt(i);
+                    return true;
+                }
+            }
+
+            if (!IsSplit)
+            {
+                return false;
+            }
+
+            return TL.Remove(qTreeObj)
+                || TR.Remove(qTreeObj)
+                || BL.Remove(qTreeObj)
+                || BR.Remove(qTreeObj);
+        }
+
         public override List<Rectangle> GetQuads()
         {
-            var quads = new List<Rectangle> { _bounds };
+            var quads = new List<Rectangle>();
+            if (!_bounds.HasValue)
+            {
+                return quads;
+            }
+            quads.Add(_bounds.Value);
+
             if (!IsSplit)
             {
                 return quads;
@@ -201,57 +210,81 @@ namespace QTree.MonoGame.Standard
             return quads;
         }
 
-        private bool TryAdd(IQuadTreeObject<T> qTreeObj)
+        public override void Clear()
         {
-            if (!_bounds.Contains(qTreeObj.Bounds))
-            {
-                return false;
-            }
-            if (IsSplit)
-            {
-                if (!TryAddChild(qTreeObj))
-                {
-                    InternalObjects.Add(qTreeObj);
-                }
+            base.Clear();
+            _bounds = null;
+        }
 
+        private bool TryGetChildToAddTo(Rectangle newBounds, out IQuadTree<T> child)
+        {
+            if (newBounds.Right < _quadStartCenter.X && newBounds.Bottom < _quadStartCenter.Y)
+            {
+                child = TL;
+                return true;
+            }
+            if (newBounds.Left > _quadStartCenter.X && newBounds.Bottom < _quadStartCenter.Y)
+            {
+                child = TR;
+                return true;
+            }
+            if (newBounds.Right < _quadStartCenter.X && newBounds.Top > _quadStartCenter.Y)
+            {
+                child = BL;
+                return true;
+            }
+            if (newBounds.Left > _quadStartCenter.X && newBounds.Top > _quadStartCenter.Y)
+            {
+                child = BR;
                 return true;
             }
 
-            InternalObjects.Add(qTreeObj);
-            if (InternalObjects.Count >= SplitLimit)
-            {
-                Split();
-            }
-            return true;
-        }
-
-        private bool TryAddChild(IQuadTreeObject<T> qTreeObj)
-        {
-            return TL.TryAdd(qTreeObj) || TR.TryAdd(qTreeObj) || BL.TryAdd(qTreeObj) || BR.TryAdd(qTreeObj);
+            child = null;
+            return false;
         }
 
         private void Split()
         {
+            if (Depth >= DepthLimit)
+            {
+                return;
+            }
             if (IsSplit)
             {
                 throw new InvalidOperationException("Tried to split tree more than once");
             }
+            _quadStartCenter = _bounds.Value.Center;
 
-            _bounds.Split(out var tl, out var tr, out var bl, out var br);
             var newDepth = Depth + 1;
 
-            TL = new QuadTree<T>(tl, newDepth, SplitLimit, DepthLimit);
-            TR = new QuadTree<T>(tr, newDepth, SplitLimit, DepthLimit);
-            BL = new QuadTree<T>(bl, newDepth, SplitLimit, DepthLimit);
-            BR = new QuadTree<T>(br, newDepth, SplitLimit, DepthLimit);
+            TL = new DynamicQuadTree<T>(newDepth, SplitLimit, DepthLimit);
+            TR = new DynamicQuadTree<T>(newDepth, SplitLimit, DepthLimit);
+            BL = new DynamicQuadTree<T>(newDepth, SplitLimit, DepthLimit);
+            BR = new DynamicQuadTree<T>(newDepth, SplitLimit, DepthLimit);
+
+            _bounds.Value.Split(out var tl, out var tr, out var bl, out var br);
+            var initialBoundsList = new (IQuadTree<T> tree, Rectangle bounds)[]
+            {
+                (TL, tl),
+                (TR, tr),
+                (BL, bl),
+                (BR, br)
+            };
 
             for (var i = 0; i < InternalObjects.Count; i++)
             {
                 var obj = InternalObjects[i];
-                if (TryAddChild(obj))
+                foreach (var (tree, bounds) in initialBoundsList)
                 {
+                    if (!bounds.Contains(obj.Bounds))
+                    {
+                        continue;
+                    }
+
+                    tree.Add(obj);
                     InternalObjects.RemoveAt(i);
                     i--;
+                    break;
                 }
             }
 

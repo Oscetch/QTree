@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace QTree.MonoGame.Standard.Exceptions
+namespace QTree.MonoGame.Common.Exceptions
 {
     public class OutOfQuadException : Exception
     {

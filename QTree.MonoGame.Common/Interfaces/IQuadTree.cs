@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 
-namespace QTree.MonoGame.Standard.Interfaces
+namespace QTree.MonoGame.Common.Interfaces
 {
     /// <summary>
     /// A list segmented in rectangles

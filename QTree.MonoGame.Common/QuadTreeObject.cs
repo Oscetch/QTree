@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
-using QTree.MonoGame.Standard.Interfaces;
+using QTree.MonoGame.Common.Interfaces;
 
-namespace QTree.MonoGame.Standard
+namespace QTree.MonoGame.Common
 {
     public class QuadTreeObject<T> : IQuadTreeObject<T>
     {

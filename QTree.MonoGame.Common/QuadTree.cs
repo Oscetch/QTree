@@ -1,11 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
-using QTree.Exceptions;
-using QTree.Interfaces;
-using QTree.MonoGame.Extensions;
+using QTree.MonoGame.Common.Exceptions;
+using QTree.MonoGame.Common.Extensions;
+using QTree.MonoGame.Common.Interfaces;
 using System;
 using System.Collections.Generic;
 
-namespace QTree
+namespace QTree.MonoGame.Common
 {
     public sealed class QuadTree<T> : QuadTreeBase<T, QuadTree<T>>
     {
@@ -57,9 +57,9 @@ namespace QTree
                 return false;
             }
 
-            for(var i = 0; i < InternalObjects.Count; i++)
+            for (var i = 0; i < InternalObjects.Count; i++)
             {
-                if(InternalObjects[i].Id.Id == qTreeObj.Id.Id)
+                if (InternalObjects[i].Id.Id == qTreeObj.Id.Id)
                 {
                     InternalObjects.RemoveAt(i);
                     return true;
@@ -166,7 +166,7 @@ namespace QTree
                 return items;
             }
 
-            foreach(var obj in InternalObjects)
+            foreach (var obj in InternalObjects)
             {
                 if (obj.Bounds.Intersects(rectangle))
                 {
@@ -218,7 +218,7 @@ namespace QTree
             }
 
             InternalObjects.Add(qTreeObj);
-            if(InternalObjects.Count >= SplitLimit)
+            if (InternalObjects.Count >= SplitLimit)
             {
                 Split();
             }
@@ -232,6 +232,10 @@ namespace QTree
 
         private void Split()
         {
+            if(Depth >= DepthLimit)
+            {
+                return;
+            }
             if (IsSplit)
             {
                 throw new InvalidOperationException("Tried to split tree more than once");

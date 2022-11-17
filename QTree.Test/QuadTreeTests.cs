@@ -129,5 +129,21 @@ namespace QTree.Test
             Assert.IsTrue(bottomLeft.FirstOrDefault(x => x.Object == CORRECT) != null);
             Assert.IsTrue(bottomRight.FirstOrDefault(x => x.Object == CORRECT) != null);
         }
+
+        [TestMethod]
+        public void DepthTest()
+        {
+            // arrange
+            var sut = new QuadTree<string>(new Rectangle(0, 0, QUAD_SIZE, QUAD_SIZE), depthLimit: 5);
+
+            // act
+            for (var i = 0; i < 1_000_000; i++)
+            {
+                sut.Add(new Rectangle(_random.Next(QUAD_SIZE), _random.Next(QUAD_SIZE), 1, 1), string.Empty);
+            }
+
+            // assert
+            Assert.AreEqual(5, sut.GetDepth());
+        }
     }
 }

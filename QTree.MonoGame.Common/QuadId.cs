@@ -1,4 +1,4 @@
-﻿namespace QTree.MonoGame.Standard
+﻿namespace QTree.MonoGame.Common
 {
     public sealed class QuadId
     {

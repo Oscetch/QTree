@@ -231,6 +231,10 @@ namespace QTree
 
         private void Split()
         {
+            if (Depth >= DepthLimit)
+            {
+                return;
+            }
             if (IsSplit)
             {
                 throw new InvalidOperationException("Tried to split tree more than once");

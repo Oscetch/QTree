@@ -2,9 +2,6 @@
 using QTree.Util;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace QTree
 {
@@ -113,6 +110,25 @@ namespace QTree
         public List<T> FindObject(Point2D point)
         {
             return FindObject(point.X, point.Y);
+        }
+
+        public int GetDepth()
+        {
+            return GetDepth(-1);
+        }
+
+        private int GetDepth(int current)
+        {
+            var currentWithThis = current + 1;
+            if (!IsSplit)
+            {
+                return currentWithThis;
+            }
+            var fromHere = 0;
+            fromHere = Math.Max(fromHere, TL.GetDepth(currentWithThis));
+            fromHere = Math.Max(fromHere, TR.GetDepth(currentWithThis));
+            fromHere = Math.Max(fromHere, BL.GetDepth(currentWithThis));
+            return Math.Max(fromHere, BR.GetDepth(currentWithThis));
         }
     }
 }

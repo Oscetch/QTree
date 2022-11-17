@@ -16,7 +16,7 @@ namespace QTree
         }
 
         private DynamicQuadTree(int depth, int splitLimit, int depthLimit)
-            : base(depth, splitLimit, depth)
+            : base(depth, splitLimit, depthLimit)
         {
         }
 
@@ -244,6 +244,10 @@ namespace QTree
 
         private void Split()
         {
+            if (Depth >= DepthLimit)
+            {
+                return;
+            }
             if (IsSplit)
             {
                 throw new InvalidOperationException("Tried to split tree more than once");

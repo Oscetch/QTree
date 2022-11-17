@@ -1,8 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
-using QTree.Interfaces;
+using QTree.MonoGame.Common.Interfaces;
+using System;
 using System.Collections.Generic;
 
-namespace QTree
+namespace QTree.MonoGame.Common
 {
     public abstract class QuadTreeBase<T, TTree> : IQuadTree<T> where TTree : QuadTreeBase<T, TTree>
     {
@@ -110,5 +111,24 @@ namespace QTree
         }
 
         public abstract List<T> FindObject(Point point);
+
+        public int GetDepth()
+        {
+            return GetDepth(-1);
+        }
+
+        private int GetDepth(int current)
+        {
+            var currentWithThis = current + 1;
+            if (!IsSplit)
+            {
+                return currentWithThis;
+            }
+            var fromHere = 0;
+            fromHere = Math.Max(fromHere, TL.GetDepth(currentWithThis));
+            fromHere = Math.Max(fromHere, TR.GetDepth(currentWithThis));
+            fromHere = Math.Max(fromHere, BL.GetDepth(currentWithThis));
+            return Math.Max(fromHere, BR.GetDepth(currentWithThis));
+        }
     }
 }
