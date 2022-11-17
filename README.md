@@ -9,6 +9,8 @@ MonoGame .net framework 4.7.2:
 `dotnet add package QTree.MonoGame --version 1.0.3`  
 MonoGame .net standard 2.1  
 `dotnet add package QTree.MonoGame.Standard --version 1.0.3`  
+MonoGame .net 6  
+`dotnet add package QTree.MonoGame.Common --version 1.0.0`
 
 ## Example usage
 
