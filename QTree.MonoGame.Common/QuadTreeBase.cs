@@ -1,17 +1,19 @@
 ﻿using Microsoft.Xna.Framework;
+using QTree.MonoGame.Common.Extensions;
 using QTree.MonoGame.Common.Interfaces;
+using QTree.MonoGame.Common.RayCasting;
 using System;
 using System.Collections.Generic;
 
 namespace QTree.MonoGame.Common
 {
-    public abstract class QuadTreeBase<T, TTree> : IQuadTree<T> where TTree : QuadTreeBase<T, TTree>
+    public abstract class QuadTreeBase<T, TTree>(int depth, int splitLimit, int depthLimit) : IQuadTree<T> where TTree : QuadTreeBase<T, TTree>
     {
-        protected int SplitLimit { get; }
-        protected int DepthLimit { get; }
-        protected int Depth { get; }
+        protected int SplitLimit { get; } = splitLimit;
+        protected int DepthLimit { get; } = depthLimit;
+        protected int Depth { get; } = depth;
 
-        protected List<IQuadTreeObject<T>> InternalObjects { get; }
+        protected List<IQuadTreeObject<T>> InternalObjects { get; } = [];
 
         protected bool IsSplit { get; set; }
 
@@ -19,14 +21,6 @@ namespace QTree.MonoGame.Common
         protected TTree TR { get; set; }
         protected TTree BL { get; set; }
         protected TTree BR { get; set; }
-
-        protected QuadTreeBase(int depth, int splitLimit, int depthLimit)
-        {
-            Depth = depth;
-            SplitLimit = splitLimit;
-            DepthLimit = depthLimit;
-            InternalObjects = new List<IQuadTreeObject<T>>();
-        }
 
         public void AddRange(params (int x, int y, int width, int height, T obj)[] objects)
         {
@@ -111,6 +105,29 @@ namespace QTree.MonoGame.Common
         }
 
         public abstract List<T> FindObject(Point point);
+
+        public void RayCast(QTreeRay ray, Func<IQuadTreeObject<T>, Vector2, RaySearchOption> rayCastPredicate) => RayCastInternal(ray, rayCastPredicate);
+
+        protected abstract bool DoesRayIntersectQuad(QTreeRay ray);
+
+        protected bool RayCastInternal(QTreeRay ray, Func<IQuadTreeObject<T>, Vector2, RaySearchOption> rayCastPredicate)
+        {
+            if (!DoesRayIntersectQuad(ray)) return true;
+            foreach (var obj in InternalObjects)
+            {
+                if (obj.Bounds.IntersectsRay(ray, out var intersection) && rayCastPredicate(obj, intersection) == RaySearchOption.STOP)
+                {
+                    return false;
+                }
+            }
+
+            if (!IsSplit) return true;
+
+            return TL.RayCastInternal(ray, rayCastPredicate)
+                && TR.RayCastInternal(ray, rayCastPredicate)
+                && BL.RayCastInternal(ray, rayCastPredicate)
+                && BR.RayCastInternal(ray, rayCastPredicate);
+        }
 
         public int GetDepth()
         {

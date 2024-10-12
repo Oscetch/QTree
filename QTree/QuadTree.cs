@@ -1,5 +1,6 @@
 ﻿using QTree.Exceptions;
 using QTree.Interfaces;
+using QTree.RayCasting;
 using QTree.Util;
 using System;
 using System.Collections.Generic;
@@ -228,6 +229,9 @@ namespace QTree
         {
             return TL.TryAdd(qTreeObj) || TR.TryAdd(qTreeObj) || BL.TryAdd(qTreeObj) || BR.TryAdd(qTreeObj);
         }
+
+        protected override bool DoesRayIntersectQuad(Ray ray) =>
+            _bounds.Contains(ray.Start) || _bounds.IntersectsRayFast(ray);
 
         private void Split()
         {

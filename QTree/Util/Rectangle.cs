@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using QTree.RayCasting;
+using System;
 
 namespace QTree.Util
 {
@@ -100,6 +100,55 @@ namespace QTree.Util
             topRight = new Rectangle(rightX, Y, halfWidth, halfHeight, Right, bottomY);
             bottomLeft = new Rectangle(X, bottomY, halfWidth, halfHeight, rightX, Bottom);
             bottomRight = new Rectangle(rightX, bottomY, halfWidth, halfHeight, Right, Bottom);
+        }
+
+        private readonly Point2D[] GetEdges() =>
+        [
+            new Point2D(Left, Top),
+            new Point2D(Right, Top),
+            new Point2D(Left, Bottom),
+            new Point2D(Right, Bottom),
+        ];
+
+        public readonly bool IntersectsRay(Ray ray, out PointF2D intersection)
+        {
+            intersection = new PointF2D(0, 0);
+            var foundIntersection = false;
+            var minDistance = float.MaxValue;
+            var edges = GetEdges();
+            for (var i = 0; i < edges.Length; i++)
+            {
+                var p1 = edges[i];
+                var p2 = edges[(i + 1) % edges.Length];
+
+                if (ray.IntersectsLine(p1, p2, out var newIntersection))
+                {
+                    foundIntersection = true;
+                    var distance = PointF2D.Distance(ray.Start, newIntersection);
+                    if (distance < minDistance)
+                    {
+                        minDistance = distance;
+                        intersection = newIntersection;
+                    }
+                }
+            }
+            return foundIntersection;
+        }
+
+        public readonly bool IntersectsRayFast(Ray ray)
+        {
+            var edges = GetEdges();
+            for (var i = 0; i < edges.Length; i++)
+            {
+                var p1 = edges[i];
+                var p2 = edges[(i + 1) % edges.Length];
+
+                if (ray.IntersectsLine(p1, p2, out _))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

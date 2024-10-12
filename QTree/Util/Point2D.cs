@@ -22,5 +22,11 @@
         {
             X = Y = value;
         }
+
+        public readonly PointF2D ToFloating() => new(X, Y);
+
+        public static Point2D operator +(Point2D left, Point2D right) => new(left.X + right.X, left.Y + right.Y);
+        public static Point2D operator -(Point2D left, Point2D right) => new(left.X - right.X, left.Y - right.Y);
+        public static implicit operator PointF2D(Point2D p) => new(p.X, p.Y);
     }
 }

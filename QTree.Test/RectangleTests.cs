@@ -92,7 +92,7 @@ namespace QTree.Test
             Assert.IsTrue(RecEquals(expectedBottomRight, resultBottomRight));
         }
 
-        private bool RecEquals(Rectangle r1, Rectangle r2)
+        private static bool RecEquals(Rectangle r1, Rectangle r2)
         {
             return r1.X == r2.X
                 && r1.Y == r2.Y
