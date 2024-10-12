@@ -5,13 +5,13 @@ using System.Collections.Generic;
 
 namespace QTree
 {
-    public abstract class QuadTreeBase<T, TTree> : IQuadTree<T> where TTree : QuadTreeBase<T, TTree>
+    public abstract class QuadTreeBase<T, TTree>(int depth, int splitLimit, int depthLimit) : IQuadTree<T> where TTree : QuadTreeBase<T, TTree>
     {
-        protected int SplitLimit { get; }
-        protected int DepthLimit { get; }
-        protected int Depth { get; }
+        protected int SplitLimit { get; } = splitLimit;
+        protected int DepthLimit { get; } = depthLimit;
+        protected int Depth { get; } = depth;
 
-        protected List<IQuadTreeObject<T>> InternalObjects { get; }
+        protected List<IQuadTreeObject<T>> InternalObjects { get; } = [];
 
         protected bool IsSplit { get; set; }
 
@@ -19,14 +19,6 @@ namespace QTree
         protected TTree TR { get; set; }
         protected TTree BL { get; set; }
         protected TTree BR { get; set; }
-
-        protected QuadTreeBase(int depth, int splitLimit, int depthLimit)
-        {
-            Depth = depth;
-            SplitLimit = splitLimit;
-            DepthLimit = depthLimit;
-            InternalObjects = new List<IQuadTreeObject<T>>();
-        }
 
         public void AddRange(params (int x, int y, int width, int height, T obj)[] objects)
         {

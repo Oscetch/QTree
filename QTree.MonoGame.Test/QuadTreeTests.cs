@@ -2,6 +2,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Xna.Framework;
 using QTree.MonoGame.Common;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
@@ -105,6 +106,35 @@ namespace QTree.MonoGame.Test
             Console.WriteLine($"Time: {time}");
             Assert.IsTrue(wasRemoved);
             Assert.IsTrue(result.Count == 0 || result.All(x => x == string.Empty));
+        }
+
+        [TestMethod]
+        public void RemoveMultiple()
+        {
+            // arrange
+            var sut = new QuadTree<string>(new Rectangle(0, 0, QUAD_SIZE, QUAD_SIZE));
+            var references = new List<QuadTreeObject<string>>();
+            for (var i = 0; i < 100_000; i++)
+            {
+                if((i & 1) > 0)
+                {
+                    var obj = new QuadTreeObject<string>(new Rectangle(_random.Next(QUAD_SIZE), _random.Next(QUAD_SIZE), 1, 1), "REMOVE");
+                    references.Add(obj);
+                    sut.Add(obj);
+                }
+                else
+                {
+                    sut.Add(new Rectangle(_random.Next(QUAD_SIZE), _random.Next(QUAD_SIZE), 1, 1), string.Empty);
+                }
+            }
+
+            // act
+            foreach(var reference in references)
+            {
+                // assert
+                Assert.IsTrue(sut.Remove(reference));
+                Assert.IsFalse(sut.FindNode(reference.Bounds.Center).FirstOrDefault(x => x.Id.Id == reference.Id.Id) != null);
+            }
         }
 
         [TestMethod]

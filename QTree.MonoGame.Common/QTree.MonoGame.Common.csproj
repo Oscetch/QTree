@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Company>$(Authors)</Company>
     <Description>A simple quadtree implementation for monogame</Description>
     <Authors>Oscar Halldin</Authors>
@@ -8,6 +8,7 @@
     <PackageTags>Quadtree;monogame</PackageTags>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <Version>1.0.1</Version>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\LICENSE">
@@ -16,7 +17,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303">
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.2.1105">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
   </ItemGroup>

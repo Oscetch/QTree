@@ -11,8 +11,8 @@ namespace QTree.Util
         public int Right;
         public int Width;
         public int Height;
-        public int Top => Y;
-        public int Left => X;
+        public readonly int Top => Y;
+        public readonly int Left => X;
 
         public static Rectangle Union(Rectangle a, Rectangle b)
         {
@@ -41,7 +41,7 @@ namespace QTree.Util
             Right = right;
         }
 
-        public Point2D GetCenter()
+        public readonly Point2D GetCenter()
         {
             Point2D center;
             center.X = Left + ((Right - Left) / 2);
@@ -49,12 +49,12 @@ namespace QTree.Util
             return center;
         }
 
-        public Rectangle Union(Rectangle other)
+        public readonly Rectangle Union(Rectangle other)
         {
             return Union(this, other);
         }
 
-        public bool Overlaps(Rectangle other)
+        public readonly bool Overlaps(Rectangle other)
         {
             return Left < other.Right
                 && Right > other.Left
@@ -62,7 +62,7 @@ namespace QTree.Util
                 && Top < other.Bottom;
         }
 
-        public bool Contains(Rectangle other)
+        public readonly bool Contains(Rectangle other)
         {
             return Left <= other.Left
                 && Right >= other.Right
@@ -70,7 +70,7 @@ namespace QTree.Util
                 && Top <= other.Top;
         }
 
-        public bool Contains(Point2D point2D)
+        public readonly bool Contains(Point2D point2D)
         {
             return Left <= point2D.X
                 && Right >= point2D.X
@@ -78,7 +78,7 @@ namespace QTree.Util
                 && Top <= point2D.Y;
         }
 
-        public bool Contains(int x, int y)
+        public readonly bool Contains(int x, int y)
         {
             return Left <= x
                 && Right >= x
@@ -86,7 +86,7 @@ namespace QTree.Util
                 && Top <= y;
         }
 
-        public void Split(out Rectangle topLeft,
+        public readonly void Split(out Rectangle topLeft,
             out Rectangle topRight,
             out Rectangle bottomLeft,
             out Rectangle bottomRight)
