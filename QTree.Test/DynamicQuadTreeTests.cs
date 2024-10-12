@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using QTree.RayCasting;
 using QTree.Util;
 using System;
 using System.Collections.Generic;
@@ -147,6 +148,47 @@ namespace QTree.Test
 
             // assert
             Assert.AreEqual(5, sut.GetDepth());
+        }
+
+        [DataTestMethod]
+        [DataRow(0, 0, QUAD_SIZE - 5000, QUAD_SIZE - 5000)]
+        [DataRow(0, QUAD_SIZE - 5000, QUAD_SIZE - 5000, QUAD_SIZE - 5000)]
+        [DataRow(QUAD_SIZE - 5000, 0, QUAD_SIZE - 5000, QUAD_SIZE - 5000)]
+        [DataRow(QUAD_SIZE, QUAD_SIZE, QUAD_SIZE - 5000, QUAD_SIZE - 5000)]
+        public void RayCastTest(int startSearchX, int startSearchY, int objectCenterX, int objectCenterY)
+        {
+            // arrange
+            var size = 200;
+            var sut = new DynamicQuadTree<string>();
+            for (var i = 0; i < 1_000_000; i++)
+            {
+                sut.Add(_random.Next(QUAD_SIZE - size), _random.Next(QUAD_SIZE - size), size, size, string.Empty);
+            }
+            var position = new Point2D(objectCenterX, objectCenterY);
+            var expected = new Rectangle(position.X - size / 2, position.Y - size / 2, size, size);
+            sut.Add(expected, "CORRECT");
+            var result = "";
+
+            // act
+            var timer = Stopwatch.StartNew();
+            var ray = Ray.BetweenVectors(new Point2D(startSearchX, startSearchY), position);
+            sut.RayCast(ray, (treeObj, hit) =>
+            {
+                if (treeObj.Object == "CORRECT")
+                {
+                    result = treeObj.Object;
+                    return RaySearchOption.STOP;
+                }
+                Assert.IsFalse(result == "CORRECT");
+                return RaySearchOption.CONTINUE;
+            });
+
+            var time = timer.ElapsedMilliseconds;
+            timer.Stop();
+
+            // assert
+            Console.WriteLine($"Time: {time}");
+            Assert.IsTrue(result == "CORRECT");
         }
     }
 }

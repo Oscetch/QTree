@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using QTree.MonoGame.Common.Extensions;
 using QTree.MonoGame.Common.Interfaces;
+using QTree.MonoGame.Common.RayCasting;
 using System;
 using System.Collections.Generic;
 
@@ -290,5 +291,8 @@ namespace QTree.MonoGame.Common
 
             IsSplit = true;
         }
+
+        protected override bool DoesRayIntersectQuad(QTreeRay ray) =>
+            _bounds.HasValue && (_bounds.Value.Contains(ray.Start) || _bounds.Value.IntersectsRayFast(ray));
     }
 }

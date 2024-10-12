@@ -1,4 +1,5 @@
 ﻿using QTree.Interfaces;
+using QTree.RayCasting;
 using QTree.Util;
 using System;
 using System.Collections.Generic;
@@ -102,6 +103,29 @@ namespace QTree
         public List<T> FindObject(Point2D point)
         {
             return FindObject(point.X, point.Y);
+        }
+
+        public void RayCast(Ray ray, Func<IQuadTreeObject<T>, PointF2D, RaySearchOption> rayCastPredicate) => RayCastInternal(ray, rayCastPredicate);
+
+        protected abstract bool DoesRayIntersectQuad(Ray ray);
+
+        protected bool RayCastInternal(Ray ray, Func<IQuadTreeObject<T>, PointF2D, RaySearchOption> rayCastPredicate)
+        {
+            if (!DoesRayIntersectQuad(ray)) return true;
+            foreach (var obj in InternalObjects)
+            {
+                if (obj.Bounds.IntersectsRay(ray, out var intersection) && rayCastPredicate(obj, intersection) == RaySearchOption.STOP)
+                {
+                    return false;
+                }
+            }
+
+            if (!IsSplit) return true;
+
+            return TL.RayCastInternal(ray, rayCastPredicate)
+                && TR.RayCastInternal(ray, rayCastPredicate)
+                && BL.RayCastInternal(ray, rayCastPredicate)
+                && BR.RayCastInternal(ray, rayCastPredicate);
         }
 
         public int GetDepth()

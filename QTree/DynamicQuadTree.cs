@@ -1,4 +1,5 @@
 ﻿using QTree.Interfaces;
+using QTree.RayCasting;
 using QTree.Util;
 using System;
 using System.Collections.Generic;
@@ -241,6 +242,9 @@ namespace QTree
             child = null;
             return false;
         }
+
+        protected override bool DoesRayIntersectQuad(Ray ray) =>
+            _bounds.HasValue && (_bounds.Value.Contains(ray.Start) || _bounds.Value.IntersectsRayFast(ray));
 
         private void Split()
         {

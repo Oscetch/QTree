@@ -1,6 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Xna.Framework;
 using QTree.MonoGame.Common;
+using QTree.MonoGame.Common.RayCasting;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -175,6 +176,47 @@ namespace QTree.MonoGame.Test
 
             // assert
             Assert.AreEqual(5, sut.GetDepth());
+        }
+
+        [DataTestMethod]
+        [DataRow(0f, 0f, QUAD_SIZE - 5000f, QUAD_SIZE - 5000f)]
+        [DataRow(0f, QUAD_SIZE - 5000f, QUAD_SIZE - 5000f, QUAD_SIZE - 5000f)]
+        [DataRow(QUAD_SIZE - 5000f, 0f, QUAD_SIZE - 5000f, QUAD_SIZE - 5000f)]
+        [DataRow(QUAD_SIZE, QUAD_SIZE, QUAD_SIZE - 5000f, QUAD_SIZE - 5000f)]
+        public void RayCastTest(float startSearchX, float startSearchY, float objectCenterX, float objectCenterY)
+        {
+            // arrange
+            var size = 200;
+            var sut = new QuadTree<string>(new Rectangle(0, 0, QUAD_SIZE, QUAD_SIZE));
+            for (var i = 0; i < 1_000_000; i++)
+            {
+                sut.Add(_random.Next(QUAD_SIZE - size), _random.Next(QUAD_SIZE - size), size, size, string.Empty);
+            }
+            var position = new Vector2(objectCenterX, objectCenterY);
+            var expected = new Rectangle((int)position.X - size / 2, (int)position.Y - size / 2, size, size);
+            sut.Add(expected, "CORRECT");
+            var result = "";
+
+            // act
+            var timer = Stopwatch.StartNew();
+            var ray = QTreeRay.BetweenVectors(new Vector2(startSearchX, startSearchY), position);
+            sut.RayCast(ray, (treeObj, hit) =>
+            {
+                if (treeObj.Object == "CORRECT")
+                {
+                    result = treeObj.Object;
+                    return RaySearchOption.STOP;
+                }
+                Assert.IsFalse(result == "CORRECT");
+                return RaySearchOption.CONTINUE;
+            });
+
+            var time = timer.ElapsedMilliseconds;
+            timer.Stop();
+
+            // assert
+            Console.WriteLine($"Time: {time}");
+            Assert.IsTrue(result == "CORRECT");
         }
     }
 }
