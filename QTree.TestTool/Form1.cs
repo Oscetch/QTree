@@ -3,14 +3,8 @@ using QTree.Interfaces;
 using QTree.TestTool.Dialogs;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace QTree.TestTool
@@ -24,14 +18,14 @@ namespace QTree.TestTool
         private int _objWidth = 10;
         private int _objHeight = 10;
 
-        private Util.Rectangle _mouseBounds = new Util.Rectangle();
+        private Util.Rectangle _mouseBounds = new();
 
         public Form1()
         {
             InitializeComponent();
             typeof(Panel).InvokeMember("DoubleBuffered",
                 BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
-                null, testAreaPanel, new object[] { true });
+                null, testAreaPanel, [true]);
             testAreaPanel.Paint += TestAreaPanel_Paint;
         }
 

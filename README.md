@@ -5,13 +5,9 @@ A simple quadtree implementation.
 ## Installation
 
 Raw:  
-`dotnet add package QTree --version 1.0.4`  
-MonoGame .net framework 4.7.2:  
-`dotnet add package QTree.MonoGame --version 1.0.3`  
-MonoGame .net standard 2.1  
-`dotnet add package QTree.MonoGame.Standard --version 1.0.3`  
-MonoGame .net 8  
-`dotnet add package QTree.MonoGame.Common --version 1.0.1`
+`dotnet add package QTree --version 1.0.5`  
+MonoGame .net 8:  
+`dotnet add package QTree.MonoGame.Common --version 1.0.2`
 
 ## Example usage
 
