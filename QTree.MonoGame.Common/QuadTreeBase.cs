@@ -106,28 +106,39 @@ namespace QTree.MonoGame.Common
 
         public abstract IEnumerable<T> FindObject(Point point);
 
-        public void RayCast(QTreeRay ray, Func<IQuadTreeObject<T>, Vector2, RaySearchOption> rayCastPredicate) => RayCastInternal(ray, rayCastPredicate);
-
-        protected abstract bool DoesRayIntersectQuad(QTreeRay ray);
-
-        protected bool RayCastInternal(QTreeRay ray, Func<IQuadTreeObject<T>, Vector2, RaySearchOption> rayCastPredicate)
+        public IEnumerable<RayHit<IQuadTreeObject<T>>> RayCast(QTreeRay ray)
         {
-            if (!DoesRayIntersectQuad(ray)) return true;
+            if (!DoesRayIntersectQuad(ray)) yield break;
+
             foreach (var obj in InternalObjects)
             {
-                if (obj.Bounds.IntersectsRay(ray, out var intersection) && rayCastPredicate(obj, intersection) == RaySearchOption.STOP)
+                if (obj.Bounds.IntersectsRay(ray, out var intersection))
                 {
-                    return false;
+                    yield return new RayHit<IQuadTreeObject<T>>(intersection, obj);
                 }
             }
 
-            if (!IsSplit) return true;
+            if (!IsSplit) yield break;
 
-            return TL.RayCastInternal(ray, rayCastPredicate)
-                && TR.RayCastInternal(ray, rayCastPredicate)
-                && BL.RayCastInternal(ray, rayCastPredicate)
-                && BR.RayCastInternal(ray, rayCastPredicate);
+            foreach (var hit in TL.RayCast(ray))
+            {
+                yield return hit;
+            }
+            foreach (var hit in TR.RayCast(ray))
+            {
+                yield return hit;
+            }
+            foreach (var hit in BL.RayCast(ray))
+            {
+                yield return hit;
+            }
+            foreach (var hit in BR.RayCast(ray))
+            {
+                yield return hit;
+            }
         }
+
+        protected abstract bool DoesRayIntersectQuad(QTreeRay ray);
 
         public int GetDepth()
         {

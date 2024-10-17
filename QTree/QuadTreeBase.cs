@@ -105,28 +105,39 @@ namespace QTree
             return FindObject(point.X, point.Y);
         }
 
-        public void RayCast(Ray ray, Func<IQuadTreeObject<T>, PointF2D, RaySearchOption> rayCastPredicate) => RayCastInternal(ray, rayCastPredicate);
-
-        protected abstract bool DoesRayIntersectQuad(Ray ray);
-
-        protected bool RayCastInternal(Ray ray, Func<IQuadTreeObject<T>, PointF2D, RaySearchOption> rayCastPredicate)
+        public IEnumerable<RayHit<IQuadTreeObject<T>>> RayCast(Ray ray)
         {
-            if (!DoesRayIntersectQuad(ray)) return true;
+            if (!DoesRayIntersectQuad(ray)) yield break;
+
             foreach (var obj in InternalObjects)
             {
-                if (obj.Bounds.IntersectsRay(ray, out var intersection) && rayCastPredicate(obj, intersection) == RaySearchOption.STOP)
+                if (obj.Bounds.IntersectsRay(ray, out var intersection))
                 {
-                    return false;
+                    yield return new RayHit<IQuadTreeObject<T>>(intersection, obj);
                 }
             }
 
-            if (!IsSplit) return true;
+            if (!IsSplit) yield break;
 
-            return TL.RayCastInternal(ray, rayCastPredicate)
-                && TR.RayCastInternal(ray, rayCastPredicate)
-                && BL.RayCastInternal(ray, rayCastPredicate)
-                && BR.RayCastInternal(ray, rayCastPredicate);
+            foreach (var hit in TL.RayCast(ray))
+            {
+                yield return hit;
+            }
+            foreach (var hit in TR.RayCast(ray))
+            {
+                yield return hit;
+            }
+            foreach (var hit in BL.RayCast(ray))
+            {
+                yield return hit;
+            }
+            foreach (var hit in BR.RayCast(ray))
+            {
+                yield return hit;
+            }
         }
+
+        protected abstract bool DoesRayIntersectQuad(Ray ray);
 
         public int GetDepth()
         {

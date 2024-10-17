@@ -202,16 +202,17 @@ namespace QTree.MonoGame.Test
             // act
             var timer = Stopwatch.StartNew();
             var ray = QTreeRay.BetweenVectors(new Vector2(startSearchX, startSearchY), position);
-            sut.RayCast(ray, (treeObj, hit) =>
+            foreach (var hit in sut.RayCast(ray))
             {
-                if (treeObj.Object == "CORRECT")
+                if (result == "" && hit.Object.Object == "CORRECT")
                 {
-                    result = treeObj.Object;
-                    return RaySearchOption.STOP;
+                    result = hit.Object.Object;
                 }
-                Assert.IsFalse(result == "CORRECT");
-                return RaySearchOption.CONTINUE;
-            });
+                else
+                {
+                    Assert.IsFalse(hit.Object.Object == "CORRECT");
+                }
+            }
 
             var time = timer.ElapsedMilliseconds;
             timer.Stop();

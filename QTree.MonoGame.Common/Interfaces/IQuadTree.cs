@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using QTree.MonoGame.Common.RayCasting;
 using System.Collections.Generic;
 
 namespace QTree.MonoGame.Common.Interfaces
@@ -110,6 +111,12 @@ namespace QTree.MonoGame.Common.Interfaces
         /// <param name="rectangle"></param>
         /// <returns></returns>
         IEnumerable<T> FindObject(Rectangle rectangle);
+        /// <summary>
+        /// Search for objects using the ray. Break the enumeration to stop searching
+        /// </summary>
+        /// <param name="ray"></param>
+        /// <returns></returns>
+        public IEnumerable<RayHit<IQuadTreeObject<T>>> RayCast(QTreeRay ray);
         /// <summary>
         /// Retrieve all quads/rectangles/nodes in the tree
         /// </summary>
