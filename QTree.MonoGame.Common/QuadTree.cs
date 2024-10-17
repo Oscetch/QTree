@@ -58,13 +58,9 @@ namespace QTree.MonoGame.Common
                 return false;
             }
 
-            for (var i = 0; i < InternalObjects.Count; i++)
+            if (InternalObjects.Remove(qTreeObj))
             {
-                if (InternalObjects[i].Id.Id == qTreeObj.Id.Id)
-                {
-                    InternalObjects.RemoveAt(i);
-                    return true;
-                }
+                return true;
             }
 
             if (!IsSplit)
@@ -78,112 +74,148 @@ namespace QTree.MonoGame.Common
                 || BR.Remove(qTreeObj);
         }
 
-        public override List<IQuadTreeObject<T>> FindNode(Point point)
+        public override IEnumerable<IQuadTreeObject<T>> FindNode(Point point)
         {
-            var items = new List<IQuadTreeObject<T>>();
             if (!_bounds.Contains(point))
             {
-                return items;
+                yield break;
             }
 
             foreach (var obj in InternalObjects)
             {
                 if (obj.Bounds.Contains(point))
                 {
-                    items.Add(obj);
+                    yield return obj;
                 }
             }
 
             if (IsSplit)
             {
-                items.AddRange(TL.FindNode(point));
-                items.AddRange(TR.FindNode(point));
-                items.AddRange(BL.FindNode(point));
-                items.AddRange(BR.FindNode(point));
+                foreach (var node in TL.FindNode(point))
+                {
+                    yield return node;
+                }
+                foreach (var node in TR.FindNode(point))
+                {
+                    yield return node;
+                }
+                foreach (var node in BL.FindNode(point))
+                {
+                    yield return node;
+                }
+                foreach (var node in BR.FindNode(point))
+                {
+                    yield return node;
+                }
             }
-
-            return items;
         }
 
-        public override List<IQuadTreeObject<T>> FindNode(Rectangle rectangle)
+        public override IEnumerable<IQuadTreeObject<T>> FindNode(Rectangle rectangle)
         {
-            var items = new List<IQuadTreeObject<T>>();
             if (!rectangle.Intersects(_bounds))
             {
-                return items;
+                yield break;
             }
 
             foreach (var obj in InternalObjects)
             {
                 if (obj.Bounds.Intersects(rectangle))
                 {
-                    items.Add(obj);
+                    yield return obj;
                 }
             }
 
             if (IsSplit)
             {
-                items.AddRange(TL.FindNode(rectangle));
-                items.AddRange(TR.FindNode(rectangle));
-                items.AddRange(BL.FindNode(rectangle));
-                items.AddRange(BR.FindNode(rectangle));
+                foreach (var node in TL.FindNode(rectangle))
+                {
+                    yield return node;
+                }
+                foreach (var node in TR.FindNode(rectangle))
+                {
+                    yield return node;
+                }
+                foreach (var node in BL.FindNode(rectangle))
+                {
+                    yield return node;
+                }
+                foreach (var node in BR.FindNode(rectangle))
+                {
+                    yield return node;
+                }
             }
-
-            return items;
         }
 
-        public override List<T> FindObject(Point point)
+        public override IEnumerable<T> FindObject(Point point)
         {
-            var items = new List<T>();
             if (!_bounds.Contains(point))
             {
-                return items;
+                yield break;
             }
 
             foreach (var obj in InternalObjects)
             {
                 if (obj.Bounds.Contains(point))
                 {
-                    items.Add(obj.Object);
+                    yield return obj.Object;
                 }
             }
 
             if (IsSplit)
             {
-                items.AddRange(TL.FindObject(point));
-                items.AddRange(TR.FindObject(point));
-                items.AddRange(BL.FindObject(point));
-                items.AddRange(BR.FindObject(point));
+                foreach (var obj in TL.FindObject(point))
+                {
+                    yield return obj;
+                }
+                foreach (var obj in TR.FindObject(point))
+                {
+                    yield return obj;
+                }
+                foreach (var obj in BL.FindObject(point))
+                {
+                    yield return obj;
+                }
+                foreach (var obj in BR.FindObject(point))
+                {
+                    yield return obj;
+                }
             }
-
-            return items;
         }
 
-        public override List<T> FindObject(Rectangle rectangle)
+        public override IEnumerable<T> FindObject(Rectangle rectangle)
         {
-            var items = new List<T>();
             if (!rectangle.Intersects(_bounds))
             {
-                return items;
+                yield break;
             }
 
             foreach (var obj in InternalObjects)
             {
                 if (obj.Bounds.Intersects(rectangle))
                 {
-                    items.Add(obj.Object);
+                    yield return obj.Object;
                 }
             }
 
             if (IsSplit)
             {
-                items.AddRange(TL.FindObject(rectangle));
-                items.AddRange(TR.FindObject(rectangle));
-                items.AddRange(BL.FindObject(rectangle));
-                items.AddRange(BR.FindObject(rectangle));
+                foreach (var obj in TL.FindObject(rectangle))
+                {
+                    yield return obj;
+                }
+                foreach (var obj in TR.FindObject(rectangle))
+                {
+                    yield return obj;
+                }
+                foreach (var obj in BL.FindObject(rectangle))
+                {
+                    yield return obj;
+                }
+                foreach (var obj in BR.FindObject(rectangle))
+                {
+                    yield return obj;
+                }
             }
-
-            return items;
         }
 
         public override List<Rectangle> GetQuads()
@@ -210,12 +242,7 @@ namespace QTree.MonoGame.Common
             }
             if (IsSplit)
             {
-                if (!TryAddChild(qTreeObj))
-                {
-                    InternalObjects.Add(qTreeObj);
-                }
-
-                return true;
+                return TryAddChild(qTreeObj) || InternalObjects.Add(qTreeObj);
             }
 
             InternalObjects.Add(qTreeObj);
@@ -250,15 +277,7 @@ namespace QTree.MonoGame.Common
             BL = new QuadTree<T>(bl, newDepth, SplitLimit, DepthLimit);
             BR = new QuadTree<T>(br, newDepth, SplitLimit, DepthLimit);
 
-            for (var i = 0; i < InternalObjects.Count; i++)
-            {
-                var obj = InternalObjects[i];
-                if (TryAddChild(obj))
-                {
-                    InternalObjects.RemoveAt(i);
-                    i--;
-                }
-            }
+            InternalObjects.RemoveWhere(TryAddChild);
 
             IsSplit = true;
         }

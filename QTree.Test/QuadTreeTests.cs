@@ -70,14 +70,14 @@ namespace QTree.Test
             var sut = new QuadTree<string>(new Rectangle(0, 0, QUAD_SIZE, QUAD_SIZE));
             for (var i = 0; i < 1_000_000; i++)
             {
-                sut.Add(_random.Next(QUAD_SIZE), _random.Next(QUAD_SIZE), 1, 1, string.Empty);
+                sut.Add(_random.Next(QUAD_SIZE), _random.Next(QUAD_SIZE), 1, 1, Guid.NewGuid().ToString());
             }
 
             var position = QUAD_SIZE - 5000;
             var searchArea = new Rectangle(position - 2000, position - 2000, 4000, 4000);
             var results = sut.FindNode(searchArea);
 
-            Assert.IsTrue(results.Count == results.GroupBy(x => x.Id).Count());
+            Assert.IsTrue(results.Count() == results.GroupBy(x => x.Object).Count());
         }
 
         [TestMethod]

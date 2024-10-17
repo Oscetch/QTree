@@ -56,13 +56,13 @@ namespace QTree.Interfaces
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        List<IQuadTreeObject<T>> FindNode(int x, int y);
+        IEnumerable<IQuadTreeObject<T>> FindNode(int x, int y);
         /// <summary>
         /// Retrieve all objects which contain the point coordinate
         /// </summary>
         /// <param name="point"></param>
         /// <returns></returns>
-        List<IQuadTreeObject<T>> FindNode(Point2D point);
+        IEnumerable<IQuadTreeObject<T>> FindNode(Point2D point);
         /// <summary>
         /// Retrieve all objects which overlap with the provided bounds
         /// </summary>
@@ -71,26 +71,26 @@ namespace QTree.Interfaces
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <returns></returns>
-        List<IQuadTreeObject<T>> FindNode(int x, int y, int width, int height);
+        IEnumerable<IQuadTreeObject<T>> FindNode(int x, int y, int width, int height);
         /// <summary>
         /// Retrieve all objects which overlap with the provided bounds
         /// </summary>
         /// <param name="rectangle"></param>
         /// <returns></returns>
-        List<IQuadTreeObject<T>> FindNode(Rectangle rectangle);
+        IEnumerable<IQuadTreeObject<T>> FindNode(Rectangle rectangle);
         /// <summary>
         /// Retrieve all objects which contain the provided x and y coordinate
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        List<T> FindObject(int x, int y);
+        IEnumerable<T> FindObject(int x, int y);
         /// <summary>
         /// Retrieve all objects which contain the provided point
         /// </summary>
         /// <param name="point"></param>
         /// <returns></returns>
-        List<T> FindObject(Point2D point);
+        IEnumerable<T> FindObject(Point2D point);
         /// <summary>
         /// Retrieve all objects which overlap with the provided bounds
         /// </summary>
@@ -99,17 +99,17 @@ namespace QTree.Interfaces
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <returns></returns>
-        List<T> FindObject(int x, int y, int width, int height);
+        IEnumerable<T> FindObject(int x, int y, int width, int height);
         /// <summary>
         /// Retrieve all objects which overlap with the provided bounds
         /// </summary>
         /// <param name="rectangle"></param>
         /// <returns></returns>
-        List<T> FindObject(Rectangle rectangle);
+        IEnumerable<T> FindObject(Rectangle rectangle);
         /// <summary>
         /// Retrieve all quads/rectangles/nodes in the tree
         /// </summary>
         /// <returns></returns>
-        List<Rectangle> GetQuads();
+        IEnumerable<Rectangle> GetQuads();
     }
 }

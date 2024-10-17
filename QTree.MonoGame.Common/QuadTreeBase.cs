@@ -13,7 +13,7 @@ namespace QTree.MonoGame.Common
         protected int DepthLimit { get; } = depthLimit;
         protected int Depth { get; } = depth;
 
-        protected List<IQuadTreeObject<T>> InternalObjects { get; } = [];
+        protected HashSet<IQuadTreeObject<T>> InternalObjects { get; } = [];
 
         protected bool IsSplit { get; set; }
 
@@ -76,35 +76,35 @@ namespace QTree.MonoGame.Common
             IsSplit = false;
         }
 
-        public List<IQuadTreeObject<T>> FindNode(int x, int y, int width, int height)
+        public IEnumerable<IQuadTreeObject<T>> FindNode(int x, int y, int width, int height)
         {
             return FindNode(new Rectangle(x, y, width, height));
         }
 
-        public abstract List<IQuadTreeObject<T>> FindNode(Rectangle rectangle);
+        public abstract IEnumerable<IQuadTreeObject<T>> FindNode(Rectangle rectangle);
 
-        public List<T> FindObject(int x, int y, int width, int height)
+        public IEnumerable<T> FindObject(int x, int y, int width, int height)
         {
             return FindObject(new Rectangle(x, y, width, height));
         }
 
-        public abstract List<T> FindObject(Rectangle rectangle);
+        public abstract IEnumerable<T> FindObject(Rectangle rectangle);
 
-        public abstract List<Rectangle> GetQuads();
+        public abstract IEnumerable<Rectangle> GetQuads();
 
-        public List<IQuadTreeObject<T>> FindNode(int x, int y)
+        public IEnumerable<IQuadTreeObject<T>> FindNode(int x, int y)
         {
             return FindNode(new Point(x, y));
         }
 
-        public abstract List<IQuadTreeObject<T>> FindNode(Point point);
+        public abstract IEnumerable<IQuadTreeObject<T>> FindNode(Point point);
 
-        public List<T> FindObject(int x, int y)
+        public IEnumerable<T> FindObject(int x, int y)
         {
             return FindObject(new Point(x, y));
         }
 
-        public abstract List<T> FindObject(Point point);
+        public abstract IEnumerable<T> FindObject(Point point);
 
         public void RayCast(QTreeRay ray, Func<IQuadTreeObject<T>, Vector2, RaySearchOption> rayCastPredicate) => RayCastInternal(ray, rayCastPredicate);
 

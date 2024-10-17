@@ -12,7 +12,7 @@ namespace QTree
         protected int DepthLimit { get; } = depthLimit;
         protected int Depth { get; } = depth;
 
-        protected List<IQuadTreeObject<T>> InternalObjects { get; } = [];
+        protected HashSet<IQuadTreeObject<T>> InternalObjects { get; } = [];
 
         protected bool IsSplit { get; set; }
 
@@ -75,32 +75,32 @@ namespace QTree
             IsSplit = false;
         }
 
-        public List<IQuadTreeObject<T>> FindNode(int x, int y, int width, int height)
+        public IEnumerable<IQuadTreeObject<T>> FindNode(int x, int y, int width, int height)
         {
             return FindNode(new Rectangle(x, y, width, height));
         }
 
-        public abstract List<IQuadTreeObject<T>> FindNode(Rectangle rectangle);
+        public abstract IEnumerable<IQuadTreeObject<T>> FindNode(Rectangle rectangle);
 
-        public List<T> FindObject(int x, int y, int width, int height)
+        public IEnumerable<T> FindObject(int x, int y, int width, int height)
         {
             return FindObject(new Rectangle(x, y, width, height));
         }
 
-        public abstract List<T> FindObject(Rectangle rectangle);
+        public abstract IEnumerable<T> FindObject(Rectangle rectangle);
 
-        public abstract List<Rectangle> GetQuads();
+        public abstract IEnumerable<Rectangle> GetQuads();
 
-        public abstract List<IQuadTreeObject<T>> FindNode(int x, int y);
+        public abstract IEnumerable<IQuadTreeObject<T>> FindNode(int x, int y);
 
-        public List<IQuadTreeObject<T>> FindNode(Point2D point)
+        public IEnumerable<IQuadTreeObject<T>> FindNode(Point2D point)
         {
             return FindNode(point.X, point.Y);
         }
 
-        public abstract List<T> FindObject(int x, int y);
+        public abstract IEnumerable<T> FindObject(int x, int y);
 
-        public List<T> FindObject(Point2D point)
+        public IEnumerable<T> FindObject(Point2D point)
         {
             return FindObject(point.X, point.Y);
         }
