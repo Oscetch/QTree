@@ -1,4 +1,5 @@
-﻿using QTree.Util;
+﻿using QTree.RayCasting;
+using QTree.Util;
 using System.Collections.Generic;
 
 namespace QTree.Interfaces
@@ -111,5 +112,11 @@ namespace QTree.Interfaces
         /// </summary>
         /// <returns></returns>
         IEnumerable<Rectangle> GetQuads();
+        /// <summary>
+        /// Search for objects using the ray. Break the enumeration to stop searching
+        /// </summary>
+        /// <param name="ray"></param>
+        /// <returns></returns>
+        IEnumerable<RayHit<IQuadTreeObject<T>>> RayCast(Ray ray);
     }
 }

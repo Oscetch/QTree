@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>QTree.Benchmarking.RayCastBenchmarks-20241031-215439</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet v0.14.0, Windows 10 (10.0.19045.5011/22H2/2022Update)
+AMD Ryzen 9 5950X, 1 CPU, 32 logical and 16 physical cores
+.NET SDK 8.0.403
+  [Host]     : .NET 8.0.10 (8.0.1024.46610), X64 RyuJIT AVX2
+  DefaultJob : .NET 8.0.10 (8.0.1024.46610), X64 RyuJIT AVX2
+</code></pre>
+<pre><code></code></pre>
+
+<table>
+<thead><tr><th>Method           </th><th>ItemsInTree</th><th>Depth</th><th>SplitLimit</th><th>Mean  </th><th>Error</th><th>StdDev</th>
+</tr>
+</thead><tbody><tr><td>RayCastPoint</td><td>10000</td><td>5</td><td>5</td><td>35,265.8 ns</td><td>683.35 ns</td><td>1,022.81 ns</td>
+</tr><tr><td>DynamicTreeRayCastPoint</td><td>10000</td><td>5</td><td>5</td><td>172,338.9 ns</td><td>3,366.68 ns</td><td>4,134.58 ns</td>
+</tr><tr><td>RayCastPoint</td><td>10000</td><td>5</td><td>50</td><td>40,555.5 ns</td><td>807.47 ns</td><td>1,021.19 ns</td>
+</tr><tr><td>DynamicTreeRayCastPoint</td><td>10000</td><td>5</td><td>50</td><td>161,928.0 ns</td><td>3,150.83 ns</td><td>3,502.13 ns</td>
+</tr><tr><td>RayCastPoint</td><td>10000</td><td>5</td><td>100</td><td>41,600.2 ns</td><td>786.92 ns</td><td>874.66 ns</td>
+</tr><tr><td>DynamicTreeRayCastPoint</td><td>10000</td><td>5</td><td>100</td><td>237.9 ns</td><td>4.81 ns</td><td>6.90 ns</td>
+</tr><tr><td>RayCastPoint</td><td>10000</td><td>10</td><td>5</td><td>36,947.5 ns</td><td>719.90 ns</td><td>1,009.20 ns</td>
+</tr><tr><td>DynamicTreeRayCastPoint</td><td>10000</td><td>10</td><td>5</td><td>209,144.6 ns</td><td>4,026.88 ns</td><td>4,475.86 ns</td>
+</tr><tr><td>RayCastPoint</td><td>10000</td><td>10</td><td>50</td><td>40,364.2 ns</td><td>802.20 ns</td><td>1,014.53 ns</td>
+</tr><tr><td>DynamicTreeRayCastPoint</td><td>10000</td><td>10</td><td>50</td><td>157,122.2 ns</td><td>3,139.09 ns</td><td>3,855.08 ns</td>
+</tr><tr><td>RayCastPoint</td><td>10000</td><td>10</td><td>100</td><td>41,275.1 ns</td><td>821.07 ns</td><td>1,008.34 ns</td>
+</tr><tr><td>DynamicTreeRayCastPoint</td><td>10000</td><td>10</td><td>100</td><td>239.5 ns</td><td>4.67 ns</td><td>6.69 ns</td>
+</tr><tr><td>RayCastPoint</td><td>10000</td><td>100</td><td>5</td><td>91,642.0 ns</td><td>1,781.23 ns</td><td>2,926.61 ns</td>
+</tr><tr><td>DynamicTreeRayCastPoint</td><td>10000</td><td>100</td><td>5</td><td>206,320.2 ns</td><td>652.77 ns</td><td>578.66 ns</td>
+</tr><tr><td>RayCastPoint</td><td>10000</td><td>100</td><td>50</td><td>39,155.4 ns</td><td>225.38 ns</td><td>210.82 ns</td>
+</tr><tr><td>DynamicTreeRayCastPoint</td><td>10000</td><td>100</td><td>50</td><td>151,230.9 ns</td><td>949.32 ns</td><td>792.73 ns</td>
+</tr><tr><td>RayCastPoint</td><td>10000</td><td>100</td><td>100</td><td>41,906.1 ns</td><td>831.93 ns</td><td>1,110.61 ns</td>
+</tr><tr><td>DynamicTreeRayCastPoint</td><td>10000</td><td>100</td><td>100</td><td>242.2 ns</td><td>4.91 ns</td><td>7.65 ns</td>
+</tr></tbody></table>
+</body>
+</html>
