@@ -205,8 +205,8 @@ Benchmark is located [here](QTree.Benchmarking/RayCastBenchmarks.cs)
 
 ### Difference from previous version
 
-[Add point](BenchmarkResults/diffs/AddDiff.html)  
-[Find point](BenchmarkResults/diffs/FindDiff.html)  
-[Ray cast](BenchmarkResults/diffs/RayCastDiff.html)
+[Add point](https://html-preview.github.io/?url=https://github.com/Oscetch/QTree/blob/main/BenchmarkResults/diffs/AddDiff.html)  
+[Find point](https://html-preview.github.io/?url=https://github.com/Oscetch/QTree/blob/main/BenchmarkResults/diffs/FindDiff.html)  
+[Ray cast](https://html-preview.github.io/?url=https://github.com/Oscetch/QTree/blob/main/BenchmarkResults/diffs/RayCastDiff.html)
 
 Find point speed has gone down significantly from the previous version. Add point seems to be a bit faster, and ray cast has gotten slower. Not sure why that is since it is so dependent on the find function.
