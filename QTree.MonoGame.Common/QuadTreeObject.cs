@@ -7,7 +7,6 @@ namespace QTree.MonoGame.Common
     {
         public Rectangle Bounds { get; } = bounds;
         public T Object { get; } = obj;
-        public QuadId Id { get; } = new QuadId();
 
         public QuadTreeObject(int x, int y, int width, int height, T obj)
             : this(new Rectangle(x, y, width, height), obj)

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>QTree.Benchmarking.AddBenchmarks-20241031-214903</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet v0.14.0, Windows 10 (10.0.19045.5011/22H2/2022Update)
+AMD Ryzen 9 5950X, 1 CPU, 32 logical and 16 physical cores
+.NET SDK 8.0.403
+  [Host]     : .NET 8.0.10 (8.0.1024.46610), X64 RyuJIT AVX2
+  DefaultJob : .NET 8.0.10 (8.0.1024.46610), X64 RyuJIT AVX2
+</code></pre>
+<pre><code></code></pre>
+
+<table>
+<thead><tr><th>Method       </th><th>ItemsInTree</th><th>Depth</th><th>SplitLimit</th><th>Mean</th><th>Error</th><th>StdDev</th>
+</tr>
+</thead><tbody><tr><td>AddPoint</td><td>10000</td><td>5</td><td>5</td><td>82.64 ns</td><td>0.162 ns</td><td>0.151 ns</td>
+</tr><tr><td>DynamicTreeAddPoint</td><td>10000</td><td>5</td><td>5</td><td>82.71 ns</td><td>0.380 ns</td><td>0.336 ns</td>
+</tr><tr><td>AddPoint</td><td>10000</td><td>5</td><td>50</td><td>64.58 ns</td><td>0.283 ns</td><td>0.251 ns</td>
+</tr><tr><td>DynamicTreeAddPoint</td><td>10000</td><td>5</td><td>50</td><td>81.18 ns</td><td>0.381 ns</td><td>0.356 ns</td>
+</tr><tr><td>AddPoint</td><td>10000</td><td>5</td><td>100</td><td>64.62 ns</td><td>0.293 ns</td><td>0.245 ns</td>
+</tr><tr><td>DynamicTreeAddPoint</td><td>10000</td><td>5</td><td>100</td><td>81.60 ns</td><td>0.529 ns</td><td>0.495 ns</td>
+</tr><tr><td>AddPoint</td><td>10000</td><td>10</td><td>5</td><td>107.77 ns</td><td>0.283 ns</td><td>0.265 ns</td>
+</tr><tr><td>DynamicTreeAddPoint</td><td>10000</td><td>10</td><td>5</td><td>135.14 ns</td><td>0.324 ns</td><td>0.271 ns</td>
+</tr><tr><td>AddPoint</td><td>10000</td><td>10</td><td>50</td><td>71.14 ns</td><td>0.192 ns</td><td>0.170 ns</td>
+</tr><tr><td>DynamicTreeAddPoint</td><td>10000</td><td>10</td><td>50</td><td>127.48 ns</td><td>0.234 ns</td><td>0.219 ns</td>
+</tr><tr><td>AddPoint</td><td>10000</td><td>10</td><td>100</td><td>65.68 ns</td><td>0.194 ns</td><td>0.172 ns</td>
+</tr><tr><td>DynamicTreeAddPoint</td><td>10000</td><td>10</td><td>100</td><td>99.86 ns</td><td>0.289 ns</td><td>0.270 ns</td>
+</tr><tr><td>AddPoint</td><td>10000</td><td>100</td><td>5</td><td>108.04 ns</td><td>0.323 ns</td><td>0.302 ns</td>
+</tr><tr><td>DynamicTreeAddPoint</td><td>10000</td><td>100</td><td>5</td><td>848.29 ns</td><td>2.068 ns</td><td>1.833 ns</td>
+</tr><tr><td>AddPoint</td><td>10000</td><td>100</td><td>50</td><td>65.59 ns</td><td>0.105 ns</td><td>0.098 ns</td>
+</tr><tr><td>DynamicTreeAddPoint</td><td>10000</td><td>100</td><td>50</td><td>127.20 ns</td><td>0.303 ns</td><td>0.268 ns</td>
+</tr><tr><td>AddPoint</td><td>10000</td><td>100</td><td>100</td><td>65.92 ns</td><td>0.060 ns</td><td>0.053 ns</td>
+</tr><tr><td>DynamicTreeAddPoint</td><td>10000</td><td>100</td><td>100</td><td>97.02 ns</td><td>0.180 ns</td><td>0.160 ns</td>
+</tr></tbody></table>
+</body>
+</html>

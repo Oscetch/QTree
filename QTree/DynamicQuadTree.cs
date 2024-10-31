@@ -53,112 +53,92 @@ namespace QTree
             }
         }
 
-        public override List<IQuadTreeObject<T>> FindNode(Rectangle rectangle)
+        public override IEnumerable<IQuadTreeObject<T>> FindNode(Rectangle rectangle)
         {
-            var items = new List<IQuadTreeObject<T>>();
             if (!_bounds.HasValue || !rectangle.Overlaps(_bounds.Value))
             {
-                return items;
+                yield break;
             }
 
             foreach (var obj in InternalObjects)
             {
                 if (obj.Bounds.Overlaps(rectangle))
                 {
-                    items.Add(obj);
+                    yield return obj;
                 }
             }
 
             if (IsSplit)
             {
-                items.AddRange(TL.FindNode(rectangle));
-                items.AddRange(TR.FindNode(rectangle));
-                items.AddRange(BL.FindNode(rectangle));
-                items.AddRange(BR.FindNode(rectangle));
+                foreach (var node in TL.FindNode(rectangle))
+                {
+                    yield return node;
+                }
+                foreach (var node in TR.FindNode(rectangle))
+                {
+                    yield return node;
+                }
+                foreach (var node in BL.FindNode(rectangle))
+                {
+                    yield return node;
+                }
+                foreach (var node in BR.FindNode(rectangle))
+                {
+                    yield return node;
+                }
             }
-
-            return items;
         }
 
-        public override List<IQuadTreeObject<T>> FindNode(int x, int y)
+        public override IEnumerable<IQuadTreeObject<T>> FindNode(int x, int y)
         {
-            var items = new List<IQuadTreeObject<T>>();
             if (!_bounds.HasValue || !_bounds.Value.Contains(x, y))
             {
-            return items;
-        }
-
-            foreach (var obj in InternalObjects)
-            {
-                if (obj.Bounds.Contains(x, y))
-                {
-                    items.Add(obj);
-                }
-            }
-
-            if (IsSplit)
-            {
-                items.AddRange(TL.FindNode(x, y));
-                items.AddRange(TR.FindNode(x, y));
-                items.AddRange(BL.FindNode(x, y));
-                items.AddRange(BR.FindNode(x, y));
-            }
-
-            return items;
-        }
-
-        public override List<T> FindObject(Rectangle rectangle)
-        {
-            var items = new List<T>();
-            if (!_bounds.HasValue || !rectangle.Overlaps(_bounds.Value))
-            {
-                return items;
-            }
-
-            foreach (var obj in InternalObjects)
-            {
-                if (obj.Bounds.Overlaps(rectangle))
-                {
-                    items.Add(obj.Object);
-                }
-            }
-
-            if (IsSplit)
-            {
-                items.AddRange(TL.FindObject(rectangle));
-                items.AddRange(TR.FindObject(rectangle));
-                items.AddRange(BL.FindObject(rectangle));
-                items.AddRange(BR.FindObject(rectangle));
-            }
-
-            return items;
-        }
-
-        public override List<T> FindObject(int x, int y)
-        {
-            var items = new List<T>();
-            if (!_bounds.HasValue || !_bounds.Value.Contains(x, y))
-            {
-                return items;
+                yield break;
             }
 
             foreach (var obj in InternalObjects)
             {
                 if (obj.Bounds.Contains(x, y))
                 {
-                    items.Add(obj.Object);
+                    yield return obj;
                 }
             }
 
             if (IsSplit)
             {
-                items.AddRange(TL.FindObject(x, y));
-                items.AddRange(TR.FindObject(x, y));
-                items.AddRange(BL.FindObject(x, y));
-                items.AddRange(BR.FindObject(x, y));
+                foreach (var node in TL.FindNode(x, y))
+                {
+                    yield return node;
+                }
+                foreach (var node in TR.FindNode(x, y))
+                {
+                    yield return node;
+                }
+                foreach (var node in BL.FindNode(x, y))
+                {
+                    yield return node;
+                }
+                foreach (var node in BR.FindNode(x, y))
+                {
+                    yield return node;
+                }
             }
+        }
 
-            return items;
+        public override IEnumerable<T> FindObject(Rectangle rectangle)
+        {
+            foreach (var node in FindNode(rectangle))
+            {
+                yield return node.Object;
+            }
+        }
+
+        public override IEnumerable<T> FindObject(int x, int y)
+        {
+            foreach (var node in FindNode(x, y))
+            {
+                yield return node.Object;
+            }
         }
 
         public override bool Remove(IQuadTreeObject<T> qTreeObj)
@@ -168,13 +148,9 @@ namespace QTree
                 return false;
             }
 
-            for (var i = 0; i < InternalObjects.Count; i++)
+            if (InternalObjects.Remove(qTreeObj))
             {
-                if (InternalObjects[i].Id.Id == qTreeObj.Id.Id)
-                {
-                    InternalObjects.RemoveAt(i);
-                    return true;
-                }
+                return true;
             }
 
             if (!IsSplit)
@@ -188,7 +164,7 @@ namespace QTree
                 || BR.Remove(qTreeObj);
         }
 
-        public override List<Rectangle> GetQuads()
+        public override IEnumerable<Rectangle> GetQuads()
         {
             var quads = new List<Rectangle>();
             if (!_bounds.HasValue)
@@ -274,10 +250,9 @@ namespace QTree
                 (BR, br)
             };
 
-            for (var i = 0; i < InternalObjects.Count; i++)
+            InternalObjects.RemoveWhere(obj =>
             {
-                var obj = InternalObjects[i];
-                foreach(var (tree, bounds) in initialBoundsList)
+                foreach (var (tree, bounds) in initialBoundsList)
                 {
                     if (!bounds.Contains(obj.Bounds))
                     {
@@ -285,11 +260,10 @@ namespace QTree
                     }
 
                     tree.Add(obj);
-                    InternalObjects.RemoveAt(i);
-                    i--;
-                    break;
+                    return true;
                 }
-            }
+                return false;
+            });
 
             IsSplit = true;
         }

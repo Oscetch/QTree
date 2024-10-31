@@ -13,7 +13,7 @@ namespace QTree.MonoGame.Common
         protected int DepthLimit { get; } = depthLimit;
         protected int Depth { get; } = depth;
 
-        protected List<IQuadTreeObject<T>> InternalObjects { get; } = [];
+        protected HashSet<IQuadTreeObject<T>> InternalObjects { get; } = [];
 
         protected bool IsSplit { get; set; }
 
@@ -76,58 +76,69 @@ namespace QTree.MonoGame.Common
             IsSplit = false;
         }
 
-        public List<IQuadTreeObject<T>> FindNode(int x, int y, int width, int height)
+        public IEnumerable<IQuadTreeObject<T>> FindNode(int x, int y, int width, int height)
         {
             return FindNode(new Rectangle(x, y, width, height));
         }
 
-        public abstract List<IQuadTreeObject<T>> FindNode(Rectangle rectangle);
+        public abstract IEnumerable<IQuadTreeObject<T>> FindNode(Rectangle rectangle);
 
-        public List<T> FindObject(int x, int y, int width, int height)
+        public IEnumerable<T> FindObject(int x, int y, int width, int height)
         {
             return FindObject(new Rectangle(x, y, width, height));
         }
 
-        public abstract List<T> FindObject(Rectangle rectangle);
+        public abstract IEnumerable<T> FindObject(Rectangle rectangle);
 
-        public abstract List<Rectangle> GetQuads();
+        public abstract IEnumerable<Rectangle> GetQuads();
 
-        public List<IQuadTreeObject<T>> FindNode(int x, int y)
+        public IEnumerable<IQuadTreeObject<T>> FindNode(int x, int y)
         {
             return FindNode(new Point(x, y));
         }
 
-        public abstract List<IQuadTreeObject<T>> FindNode(Point point);
+        public abstract IEnumerable<IQuadTreeObject<T>> FindNode(Point point);
 
-        public List<T> FindObject(int x, int y)
+        public IEnumerable<T> FindObject(int x, int y)
         {
             return FindObject(new Point(x, y));
         }
 
-        public abstract List<T> FindObject(Point point);
+        public abstract IEnumerable<T> FindObject(Point point);
 
-        public void RayCast(QTreeRay ray, Func<IQuadTreeObject<T>, Vector2, RaySearchOption> rayCastPredicate) => RayCastInternal(ray, rayCastPredicate);
-
-        protected abstract bool DoesRayIntersectQuad(QTreeRay ray);
-
-        protected bool RayCastInternal(QTreeRay ray, Func<IQuadTreeObject<T>, Vector2, RaySearchOption> rayCastPredicate)
+        public IEnumerable<RayHit<IQuadTreeObject<T>>> RayCast(QTreeRay ray)
         {
-            if (!DoesRayIntersectQuad(ray)) return true;
+            if (!DoesRayIntersectQuad(ray)) yield break;
+
             foreach (var obj in InternalObjects)
             {
-                if (obj.Bounds.IntersectsRay(ray, out var intersection) && rayCastPredicate(obj, intersection) == RaySearchOption.STOP)
+                if (obj.Bounds.IntersectsRay(ray, out var intersection))
                 {
-                    return false;
+                    yield return new RayHit<IQuadTreeObject<T>>(intersection, obj);
                 }
             }
 
-            if (!IsSplit) return true;
+            if (!IsSplit) yield break;
 
-            return TL.RayCastInternal(ray, rayCastPredicate)
-                && TR.RayCastInternal(ray, rayCastPredicate)
-                && BL.RayCastInternal(ray, rayCastPredicate)
-                && BR.RayCastInternal(ray, rayCastPredicate);
+            foreach (var hit in TL.RayCast(ray))
+            {
+                yield return hit;
+            }
+            foreach (var hit in TR.RayCast(ray))
+            {
+                yield return hit;
+            }
+            foreach (var hit in BL.RayCast(ray))
+            {
+                yield return hit;
+            }
+            foreach (var hit in BR.RayCast(ray))
+            {
+                yield return hit;
+            }
         }
+
+        protected abstract bool DoesRayIntersectQuad(QTreeRay ray);
 
         public int GetDepth()
         {

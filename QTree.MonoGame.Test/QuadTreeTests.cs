@@ -71,14 +71,14 @@ namespace QTree.MonoGame.Test
             var sut = new QuadTree<string>(new Rectangle (0, 0, QUAD_SIZE, QUAD_SIZE));
             for (var i = 0; i < 1_000_000; i++)
             {
-                sut.Add(_random.Next(QUAD_SIZE), _random.Next(QUAD_SIZE), 1, 1, string.Empty);
+                sut.Add(_random.Next(QUAD_SIZE), _random.Next(QUAD_SIZE), 1, 1, Guid.NewGuid().ToString());
             }
 
             var position = QUAD_SIZE - 5000;
             var searchArea = new Rectangle (position - 2000, position - 2000, 4000, 4000);
             var results = sut.FindNode(searchArea);
 
-            Assert.IsTrue(results.Count == results.GroupBy(x => x.Id).Count());
+            Assert.IsTrue(results.Count() == results.GroupBy(x => x.Object).Count());
         }
 
         [TestMethod]
@@ -130,11 +130,13 @@ namespace QTree.MonoGame.Test
             }
 
             // act
+            foreach (var reference in references)
+            {
+                Assert.IsTrue(sut.Remove(reference));
+            }
             foreach(var reference in references)
             {
-                // assert
-                Assert.IsTrue(sut.Remove(reference));
-                Assert.IsFalse(sut.FindNode(reference.Bounds.Center).FirstOrDefault(x => x.Id.Id == reference.Id.Id) != null);
+                Assert.IsTrue(sut.FindNode(reference.Bounds.Center).FirstOrDefault(x => x.Object == "REMOVE") == null);
             }
         }
 
@@ -200,16 +202,17 @@ namespace QTree.MonoGame.Test
             // act
             var timer = Stopwatch.StartNew();
             var ray = QTreeRay.BetweenVectors(new Vector2(startSearchX, startSearchY), position);
-            sut.RayCast(ray, (treeObj, hit) =>
+            foreach (var hit in sut.RayCast(ray))
             {
-                if (treeObj.Object == "CORRECT")
+                if (result == "" && hit.Object.Object == "CORRECT")
                 {
-                    result = treeObj.Object;
-                    return RaySearchOption.STOP;
+                    result = hit.Object.Object;
                 }
-                Assert.IsFalse(result == "CORRECT");
-                return RaySearchOption.CONTINUE;
-            });
+                else
+                {
+                    Assert.IsFalse(hit.Object.Object == "CORRECT");
+                }
+            }
 
             var time = timer.ElapsedMilliseconds;
             timer.Stop();

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>QTree.Benchmarking.FindPointBenchmarks-20241031-221435</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet v0.14.0, Windows 10 (10.0.19045.5011/22H2/2022Update)
+AMD Ryzen 9 5950X, 1 CPU, 32 logical and 16 physical cores
+.NET SDK 8.0.403
+  [Host]     : .NET 8.0.10 (8.0.1024.46610), X64 RyuJIT AVX2
+  DefaultJob : .NET 8.0.10 (8.0.1024.46610), X64 RyuJIT AVX2
+</code></pre>
+<pre><code></code></pre>
+
+<table>
+<thead><tr><th>Method        </th><th>ItemsInTree</th><th>Depth</th><th>SplitLimit</th><th>Mean </th><th>Error</th><th>StdDev</th>
+</tr>
+</thead><tbody><tr><td>FindPoint</td><td>10000</td><td>5</td><td>5</td><td>631.9 ns</td><td>12.46 ns</td><td>21.81 ns</td>
+</tr><tr><td>DynamicTreeFindPoint</td><td>10000</td><td>5</td><td>5</td><td>50,217.0 ns</td><td>357.53 ns</td><td>316.94 ns</td>
+</tr><tr><td>FindPoint</td><td>10000</td><td>5</td><td>50</td><td>678.1 ns</td><td>13.40 ns</td><td>15.43 ns</td>
+</tr><tr><td>DynamicTreeFindPoint</td><td>10000</td><td>5</td><td>50</td><td>8,087.3 ns</td><td>37.03 ns</td><td>34.64 ns</td>
+</tr><tr><td>FindPoint</td><td>10000</td><td>5</td><td>100</td><td>682.1 ns</td><td>13.69 ns</td><td>15.77 ns</td>
+</tr><tr><td>DynamicTreeFindPoint</td><td>10000</td><td>5</td><td>100</td><td>6,819.6 ns</td><td>7.96 ns</td><td>7.44 ns</td>
+</tr><tr><td>FindPoint</td><td>10000</td><td>10</td><td>5</td><td>808.3 ns</td><td>7.42 ns</td><td>6.58 ns</td>
+</tr><tr><td>DynamicTreeFindPoint</td><td>10000</td><td>10</td><td>5</td><td>57,833.7 ns</td><td>182.14 ns</td><td>152.09 ns</td>
+</tr><tr><td>FindPoint</td><td>10000</td><td>10</td><td>50</td><td>675.5 ns</td><td>13.00 ns</td><td>13.91 ns</td>
+</tr><tr><td>DynamicTreeFindPoint</td><td>10000</td><td>10</td><td>50</td><td>7,848.2 ns</td><td>11.70 ns</td><td>10.95 ns</td>
+</tr><tr><td>FindPoint</td><td>10000</td><td>10</td><td>100</td><td>698.6 ns</td><td>9.12 ns</td><td>8.53 ns</td>
+</tr><tr><td>DynamicTreeFindPoint</td><td>10000</td><td>10</td><td>100</td><td>6,534.7 ns</td><td>11.08 ns</td><td>8.65 ns</td>
+</tr><tr><td>FindPoint</td><td>10000</td><td>100</td><td>5</td><td>856.4 ns</td><td>16.13 ns</td><td>15.84 ns</td>
+</tr><tr><td>DynamicTreeFindPoint</td><td>10000</td><td>100</td><td>5</td><td>41,468.0 ns</td><td>174.92 ns</td><td>155.06 ns</td>
+</tr><tr><td>FindPoint</td><td>10000</td><td>100</td><td>50</td><td>697.4 ns</td><td>9.61 ns</td><td>8.52 ns</td>
+</tr><tr><td>DynamicTreeFindPoint</td><td>10000</td><td>100</td><td>50</td><td>8,142.2 ns</td><td>11.74 ns</td><td>10.41 ns</td>
+</tr><tr><td>FindPoint</td><td>10000</td><td>100</td><td>100</td><td>707.6 ns</td><td>13.53 ns</td><td>14.47 ns</td>
+</tr><tr><td>DynamicTreeFindPoint</td><td>10000</td><td>100</td><td>100</td><td>6,532.9 ns</td><td>19.00 ns</td><td>15.87 ns</td>
+</tr></tbody></table>
+</body>
+</html>
