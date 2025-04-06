@@ -34,11 +34,11 @@ for(var x = 0; x < 2000; x += 20)
 
 // find some objects
 var objectsInArea = quadTree.FindNode(500, 500, 50, 50);
-var otherObjectsInSameArea = dynamicTree.Add(x, y, 10, 10, "whatevs");
+var otherObjectsInSameArea = dynamicTree.FindNode(500, 500, 50, 50);
 
 // remove an object
-quadTree.Remove(objectsInArea[0]);
-dynamicTree.Remove(objectsInArea[0]);
+quadTree.Remove(objectsInArea.First());
+dynamicTree.Remove(objectsInArea.First());
 
 // clear the tree
 quadTree.Clear();
@@ -56,7 +56,7 @@ In the monogame framework there is already a class called `Ray` which is used wi
 // create a ray with a start point and direction
 var searchStartPosition = new Vector2(100, 100);
 var direction = new Vector2(.5f, .5f);
-var ray = new QTreeRay(searchStartPostion, direction);
+var ray = new QTreeRay(searchStartPosition, direction);
 
 // if you want to use an angle in radians instead you can do
 var rayFromRadians = new QTreeRay(searchStartPosition, 3.14f);
@@ -65,27 +65,14 @@ var rayFromRadians = new QTreeRay(searchStartPosition, 3.14f);
 var otherPosition = new Vector2(200, 200);
 var rayBetweenPositions = QTreeRay.BetweenVectors(searchStartPosition, otherPosition);
 
-// search on the tree
+// ray cast all in specific range
+var distanceResults = qtree.RayCast(ray).Where(result => Vector2.Distance(ray.Start, result.Hit) < YOUR_MAX_DISTANCE);
 
-qtree.RayCast(ray, (hitObject, intersection) => {
-  // if you're looking for a specific object:
-  if (hitObject.IsTheObjectYoureSearchingFor) {
-    return RaySearchOption.STOP;
-  } else {
-    return RaySearchOption.CONTINUE;
-  }
+// get first collision from start point
+var firstHit = qtree.RayCast(ray).OrderBy(result => Vector2.Distance(ray.Start, result.Hit)).FirstOrDefault()?.Object;
 
-  // if you're looking for all objects in the path:
-  if (Vector2.Distance(ray.Start, intersection) > YOUR_MAX_DISTANCE) {
-    return RaySearchOption.STOP;
-  } else {
-    aListWhereYouPlaceAllFoundObjects.Add(hitObject);
-    return RaySearchOption.CONTINUE;
-  }
-
-  // if you want to look at everything in the direction you can just continue passing CONTINUE
-  return RaySearchOption.CONTINUE;
-});
+// get everything in collision with the ray
+var all = qtree.RayCast(ray).ToList();
 ```
 
 #### Not monogame
@@ -103,27 +90,14 @@ var rayFromRadians = new Ray(searchStartPosition, 3.14f);
 var otherPosition = new Point2D(200, 200);
 var rayBetweenPositions = Ray.BetweenVectors(searchStartPosition, otherPosition);
 
-// search on the tree
+// ray cast all in specific range
+var distanceResults = qtree.RayCast(ray).Where(result => Vector2.Distance(ray.Start, result.Hit) < YOUR_MAX_DISTANCE);
 
-qtree.RayCast(ray, (hitObject, intersection) => {
-  // if you're looking for a specific object:
-  if (hitObject.IsTheObjectYoureSearchingFor) {
-    return RaySearchOption.STOP;
-  } else {
-    return RaySearchOption.CONTINUE;
-  }
+// get first collision from start point
+var firstHit = qtree.RayCast(ray).OrderBy(result => Vector2.Distance(ray.Start, result.Hit)).FirstOrDefault()?.Object;
 
-  // if you're looking for all objects in the path for a set distance:
-  if (Vector2.Distance(ray.Start, intersection) > YOUR_MAX_DISTANCE) {
-    return RaySearchOption.STOP;
-  } else {
-    aListWhereYouPlaceAllFoundObjects.Add(hitObject);
-    return RaySearchOption.CONTINUE;
-  }
-
-  // if you want to look at everything in the direction you can just continue passing CONTINUE
-  return RaySearchOption.CONTINUE;
-});
+// get everything in collision with the ray
+var all = qtree.RayCast(ray).ToList();
 ```
 
 ## Benchmarks
